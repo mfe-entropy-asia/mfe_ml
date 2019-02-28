@@ -9,7 +9,7 @@ import os
 
 class DataCleaner:
     # This class is to do the data cleaning, and generate the input for the NGRAM model
-    def __init__(self,language, input_file_lst, output_file):
+    def __init__(self, language, input_file_lst, output_file):
         self.headline_lst = []
         self.body_lst = []
         self.language = language
