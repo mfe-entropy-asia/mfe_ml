@@ -1,4 +1,5 @@
 import re
+import os
 # from nltk import word_tokenize
 # from nltk import Text
 # from nltk import ngrams
@@ -16,6 +17,7 @@ class DataCleaner:
         self.output_file = output_file
 
     def __call__(self):
+        self.remove_out_file()  # Remove the output file if it exists
         self.filter_language()
         self.gen_headline_lst()
         self.gen_body_lst()
@@ -47,8 +49,7 @@ class DataCleaner:
                         output.write(m_data.group(1)+'\n')
             output.close()
 
-
-dat_clean = DataCleaner("en", ["news.txt", "news.txt", "news.txt"], "en_output.dat")
-dat_clean()
-# tokens=word_tokenize(dat_clean.body_lst[5])
-# print(tokens)
+    def remove_out_file(self):
+        if os.path.isfile(self.output_file):
+            os.remove(self.output_file)
+        print("Output File Removed!")
