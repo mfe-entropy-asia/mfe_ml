@@ -8,10 +8,10 @@ The project meant to replicate the work done by the referred paper. The code mai
 3. Regression(?): This part is to use the output of the model to do some financial forecasting
 
 
-##Data cleaning
+## Data cleaning
 TBA
-##Model
+## Model
 TBA
-##Financial model
+## Financial model
 TBA
 
