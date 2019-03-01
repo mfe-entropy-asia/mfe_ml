@@ -1,6 +1,6 @@
 import re
 import os
-import numpy
+# import numpy
 # from nltk import word_tokenize
 # from nltk import Text
 # from nltk import ngrams
@@ -21,25 +21,35 @@ class DataCleaner:
         self.find_data = re.compile("\"data\": {(.*?)}")
 
     def __call__(self):
-        self.remove_out_file()  # Remove the output file if it exists
+        self.remove_output_file()  # Remove the output file if it exists
         self.filter_language()
-        self.gen_headline_lst()
-        self.gen_body_lst()
+        self.gen_lst()
+        # self.gen_headline_lst()
+        # self.gen_body_lst()
 
-    def gen_headline_lst(self):
+    # def gen_headline_lst(self):
+    #     with open(self.output_file, encoding="utf-8") as f:
+    #         for line in f:
+    #             m_headline = self.find_headline.search(line)
+    #             self.headline_lst.append(m_headline.group(1))
+    #
+    # def gen_body_lst(self):
+    #     with open(self.output_file, encoding="utf-8") as f:
+    #         for line in f:
+    #             m_body = self.find_body.search(line)
+    #             self.body_lst.append(m_body.group(1))
+
+    def gen_lst(self):
+        """Function: To generate the lst needed for NGRAM model"""
         with open(self.output_file, encoding="utf-8") as f:
             for line in f:
                 m_headline = self.find_headline.search(line)
-                self.headline_lst.append(m_headline.group(1))   
-
-    def gen_body_lst(self):
-        with open(self.output_file, encoding="utf-8") as f:
-            for line in f:
                 m_body = self.find_body.search(line)
-                self.body_lst.append(m_body.group(1))   
+                self.headline_lst.append(m_headline.group(1))
+                self.body_lst.append(m_body.group(1))
 
     def filter_language(self):
-        # This function is to filter news in English language and to keep only the content of data section
+        """This function is to filter news according the language and to keep only the content of data section"""
         find_lg = re.compile("\"language\": \"" + self.language + "\"")
         for input_file in self.input_file_lst:
             with open(input_file, encoding="utf-8") as f:
@@ -50,7 +60,7 @@ class DataCleaner:
                         output.write(m_data.group(1)+'\n')
             output.close()
 
-    def remove_out_file(self):
+    def remove_output_file(self):
         if os.path.isfile(self.output_file):
             os.remove(self.output_file)
         print("Output File Removed!")
