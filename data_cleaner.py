@@ -1,5 +1,6 @@
 import re
 import os
+import numpy
 # from nltk import word_tokenize
 # from nltk import Text
 # from nltk import ngrams
