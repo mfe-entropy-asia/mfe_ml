@@ -1,15 +1,15 @@
 import re
 import os
-# import numpy
-# from nltk import word_tokenize
-# from nltk import Text
-# from nltk import ngrams
-# from nltk import FreqDist
-# from nltk.book import *
 
 
 class DataCleaner:
-    # This class is to do the data cleaning, and generate the input for the NGRAM model
+    """
+    Class name: DataCleaner
+    CLass Methods:
+        1. filter_language: This method is to filter the raw data with the language given
+        2. data_clean(TBD): This method is to the data cleaning, including multiple rules
+        3. gen_lst: This method is to generate lists items to pass to the ngram model
+    """
     def __init__(self, language, input_file_lst, output_file):
         self.headline_lst = []
         self.body_lst = []
