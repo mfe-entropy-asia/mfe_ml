@@ -17,5 +17,5 @@ TBA
 
 
 ## Useful links:
-https://www.nltk.org/api/nltk.lm.html#module-nltk.lm
+https://www.nltk.org/api/nltk.lm.html#module-nltk.lm <br/>
 https://stackoverflow.com/questions/37504391/train-ngrammodel-in-python
