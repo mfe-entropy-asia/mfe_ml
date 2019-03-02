@@ -15,3 +15,7 @@ TBA
 ### Financial model
 TBA
 
+
+## Useful links:
+https://www.nltk.org/api/nltk.lm.html#module-nltk.lm
+https://stackoverflow.com/questions/37504391/train-ngrammodel-in-python
