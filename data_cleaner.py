@@ -16,9 +16,9 @@ class DataCleaner:
         self.language = language
         self.input_file_lst = input_file_lst
         self.output_file = output_file
-        self.find_headline = re.compile('\"headline\": \"(.*?)\"')
-        self.find_body = re.compile('\"body\": \"(.*?)\"')
-        self.find_data = re.compile("\"data\": {(.*?)}")
+        self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
+        self.find_body = re.compile('"body": "(.*?)", "mimeType"')
+        self.find_data = re.compile("\"data\": {(.*?)}}")
 
     def __call__(self):
         self.remove_output_file()  # Remove the output file if it exists
