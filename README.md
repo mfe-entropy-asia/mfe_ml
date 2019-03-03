@@ -21,9 +21,9 @@ https://www.nltk.org/api/nltk.lm.html#module-nltk.lm <br/>
 https://stackoverflow.com/questions/37504391/train-ngrammodel-in-python
 
 ## 1st meeting minutes
-Date: 2/3/2019
-Attendees: ZZZF, LY, FZK, ZTY
-TO-DOs
+Date: 2/3/2019 \
+Attendees: ZZZF, LY, FZK, ZTY \
+TO-DOs:
 1. pre-process
 	0. to use 61's preprocess code
 	1. to filter news based on target company(GS for instance)
