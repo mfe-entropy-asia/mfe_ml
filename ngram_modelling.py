@@ -6,20 +6,27 @@ from nltk.tokenize import sent_tokenize
 # from nltk.util import pad_sequence
 from nltk.lm.preprocessing import padded_everygram_pipeline
 from nltk.lm import MLE
+import string
 # from nltk import Text
+translator = str.maketrans('', '', string.punctuation)
 dat_clean = DataCleaner("en", ["news.txt"], "en_output.dat")
 dat_clean()
-# for i in range(8):
-#     print(dat_clean.headline_lst[i])
-print(dat_clean.body_lst[4])
-tokens = [word_tokenize(sentence) for sentence in sent_tokenize(dat_clean.body_lst[4])]
+
+# print(dat_clean.body_lst[4])
+# print(sent_tokenize(dat_clean.body_lst[4]))
+text = []
+for body in dat_clean.body_lst:
+    if body != '':
+        text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
+
+# tokens = [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(dat_clean.body_lst[4])]
 # print(tokens)
-for i in tokens:
-    print(i)
-train, vocab = padded_everygram_pipeline(4, tokens)
+# for i in tokens:
+#     print(i)
+train, vocab = padded_everygram_pipeline(4, text)
 lm = MLE(4)
 lm.fit(train, vocab)
 # for i in lm.vocab:
 #     print(i)
-# print(len(lm.vocab))
-# print(lm.counts)
+print(len(lm.vocab))
+print(lm.counts)
