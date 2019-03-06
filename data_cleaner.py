@@ -45,8 +45,9 @@ class DataCleaner:
             for line in f:
                 m_headline = self.find_headline.search(line)
                 m_body = self.find_body.search(line)
-                self.headline_lst.append(m_headline.group(1).replace('\\n', '\n').replace('\"', '"'))
-                self.body_lst.append(m_body.group(1).replace('\\n', '\n').replace('\\"', '\"'))
+                if m_body != '':
+                    self.headline_lst.append(m_headline.group(1).replace('\\n', '\n').replace('\"', '"'))
+                    self.body_lst.append(m_body.group(1).replace('\\n', '\n').replace('\\"', '\"'))
 
     def filter_language(self):
         """This function is to filter news according the language and to keep only the content of data section"""
