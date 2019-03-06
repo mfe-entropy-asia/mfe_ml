@@ -8,7 +8,7 @@ from nltk.lm.preprocessing import padded_everygram_pipeline
 from nltk.lm import MLE
 import string
 # from nltk import Text
-translator = str.maketrans('', '', string.punctuation)
+translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
 dat_clean = DataCleaner("en", ["news.txt"], "en_output.dat")
 dat_clean()
 
@@ -16,8 +16,8 @@ dat_clean()
 # print(sent_tokenize(dat_clean.body_lst[4]))
 text = []
 for body in dat_clean.body_lst:
-    if body != '':
-        text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
+    # if body != '':
+    text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
 
 # tokens = [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(dat_clean.body_lst[4])]
 # print(tokens)
@@ -28,5 +28,9 @@ lm = MLE(4)
 lm.fit(train, vocab)
 # for i in lm.vocab:
 #     print(i)
+
+for i in lm.counts[4]:  # print all the 3 grams
+    print(i)
+
 print(len(lm.vocab))
 print(lm.counts)
