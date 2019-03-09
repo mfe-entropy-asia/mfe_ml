@@ -87,11 +87,11 @@ class DataCleaner:
             output.close()
 
     def filter_headline(self):
-        find_lg = re.compile(r'"headline": "TABLE-.*"')
+        headline_table = re.compile(r'"headline": "TABLE-.*"')
         with open(self.intermediate_language, encoding="utf-8") as f:
             output = open(self.intermediate_headline, "a+", encoding="utf-8")
             for line in f:
-                if not find_lg.search(line):
+                if not headline_table.search(line) and "*TOP NEWS*-Front Pag" not in line:
                     output.write(line)
         output.close()
 
