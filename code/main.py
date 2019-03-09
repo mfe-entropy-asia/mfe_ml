@@ -1,4 +1,4 @@
-from code.data_cleaner import DataCleaner
+from data_cleaner import DataCleaner
 # from nltk import ngrams
 # from nltk import FreqDist
 # from nltk import word_tokenize
