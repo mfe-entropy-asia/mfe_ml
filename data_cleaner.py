@@ -9,7 +9,7 @@ class DataCleaner:
     CLass Methods:
         1. filter_language: This method is to filter the raw data with the language given
         2. data_clean(TBD): This method is to the data cleaning, including multiple rules
-        3. gen_lst: This method is to generate lists items to pass to the ngram model
+        3. gen_data: This method is to generate lists items to pass to the ngram model
     """
     def __init__(self, language, input_file_lst, output_file):
         self.headline_lst = []
@@ -26,7 +26,7 @@ class DataCleaner:
     def __call__(self):
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_language()
-        self.gen_lst()
+        self.gen_data()
         # self.gen_headline_lst()
         # self.gen_body_lst()
 
@@ -42,11 +42,12 @@ class DataCleaner:
     #             m_body = self.find_body.search(line)
     #             self.body_lst.append(m_body.group(1))
     @staticmethod
-    def replace_newline(string):
+    def data_regx_clean(string):
+        """Function that contains all the data processing"""
         return string.replace('\\n', '\n').replace('\"', '"').replace('\\r', '\r')
 
-    def gen_lst(self):
-        """Function: To generate the lst needed for NGRAM model"""
+    def gen_data(self):
+        """Function: To generate the list and dictionary needed for NGRAM model"""
         with open(self.output_file, encoding="utf-8") as f:
             for line in f:
                 m_headline = self.find_headline.search(line)
@@ -56,14 +57,14 @@ class DataCleaner:
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(self.replace_newline(m_headline))
-                    self.body_lst.append(self.replace_newline(m_body))
+                    self.headline_lst.append(self.data_regx_clean(m_headline))
+                    self.body_lst.append(self.data_regx_clean(m_body))
                     m_time = np.datetime64(m_time).astype('datetime64[D]')
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
-                        self.m_dict[m_time].append(self.replace_newline(m_body))
+                        self.m_dict[m_time].append(self.data_regx_clean(m_body))
                     else:
-                        self.m_dict[m_time].append(self.replace_newline(m_body))
+                        self.m_dict[m_time].append(self.data_regx_clean(m_body))
 
     def filter_language(self):
         """This function is to filter news according the language and to keep only the content of data section"""

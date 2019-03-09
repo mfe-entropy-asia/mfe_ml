@@ -3,6 +3,7 @@
     <words>
       <w>ngrams</w>
       <w>nltk</w>
+      <w>regx</w>
     </words>
   </dictionary>
 </component>

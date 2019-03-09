@@ -13,4 +13,4 @@ dat_clean()
 #     print(i)
 
 for key in dat_clean.m_dict:
-    print(dat_clean.m_dict[key][4])
+    print(dat_clean.m_dict[key][1])
