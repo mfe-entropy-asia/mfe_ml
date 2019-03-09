@@ -9,7 +9,7 @@ from nltk.lm import MLE
 import string
 # from nltk import Text
 translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
-dat_clean = DataCleaner("en", ["news.txt"], "en_output.dat")
+dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
 dat_clean()
 
 # print(dat_clean.body_lst[4])
