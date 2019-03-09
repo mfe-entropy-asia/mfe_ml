@@ -1,5 +1,6 @@
 import re
 import os
+import numpy as np
 
 
 class DataCleaner:
@@ -13,12 +14,14 @@ class DataCleaner:
     def __init__(self, language, input_file_lst, output_file):
         self.headline_lst = []
         self.body_lst = []
+        self.m_dict = {}
         self.language = language
         self.input_file_lst = input_file_lst
         self.output_file = output_file
         self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
         self.find_data = re.compile("\"data\": {(.*?)}}")
+        self.find_time = re.compile('"versionCreated": "(.*?)"')
 
     def __call__(self):
         self.remove_output_file()  # Remove the output file if it exists
@@ -38,16 +41,29 @@ class DataCleaner:
     #         for line in f:
     #             m_body = self.find_body.search(line)
     #             self.body_lst.append(m_body.group(1))
+    @staticmethod
+    def replace_newline(string):
+        return string.replace('\\n', '\n').replace('\"', '"').replace('\\r', '\r')
 
     def gen_lst(self):
         """Function: To generate the lst needed for NGRAM model"""
         with open(self.output_file, encoding="utf-8") as f:
             for line in f:
                 m_headline = self.find_headline.search(line)
+                m_headline = m_headline.group(1)
                 m_body = self.find_body.search(line)
+                m_body = m_body.group(1)
+                m_time = self.find_time.search(line)
+                m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(m_headline.group(1).replace('\\n', '\n').replace('\"', '"'))
-                    self.body_lst.append(m_body.group(1).replace('\\n', '\n').replace('\\"', '\"'))
+                    self.headline_lst.append(self.replace_newline(m_headline))
+                    self.body_lst.append(self.replace_newline(m_body))
+                    m_time = np.datetime64(m_time).astype('datetime64[D]')
+                    if m_time not in self.m_dict:
+                        self.m_dict[m_time] = []
+                        self.m_dict[m_time].append(self.replace_newline(m_body))
+                    else:
+                        self.m_dict[m_time].append(self.replace_newline(m_body))
 
     def filter_language(self):
         """This function is to filter news according the language and to keep only the content of data section"""
