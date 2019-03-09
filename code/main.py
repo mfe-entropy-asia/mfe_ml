@@ -4,7 +4,7 @@ from data_cleaner import DataCleaner
 # from nltk import word_tokenize
 # from nltk import sent_tokenize
 # from nltk import Text
-dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/en_output.dat")
+dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
 dat_clean()
 # for i in range(8):
 #     print(dat_clean.headline_lst[i])
