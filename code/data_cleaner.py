@@ -22,6 +22,7 @@ class DataCleaner:
         self.output_file = output_path + "en_output.dat"
         self.intermediate_filtered = output_path + "0_filtered.dat"
         self.find_en = re.compile("\"language\": \"" + self.language + "\"")
+        self.find_altId = re.compile('"altId": "(.*?)",')
         self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
         self.find_data = re.compile("\"data\": {(.*?)}}")
@@ -71,6 +72,7 @@ class DataCleaner:
                         self.m_dict[m_time].append(self.data_regx_clean(m_body))
 
     def filter_all_conditions(self):
+        unique_alt_id = set()
         for input_file in self.input_file_lst:
             with open(input_file, encoding="utf-8") as f:
                 output = open(self.intermediate_filtered, "a+", encoding="utf-8")
@@ -78,16 +80,27 @@ class DataCleaner:
                     if self.not_english(line):
                         m_data = self.find_data.search(line)
                         data = m_data.group(1)
-                        if self.target_headline(data):
+                        if self.target_headline(data) and self.new_story(unique_alt_id, data):
                             output.write(data + "\n")
+                print("uniqueAltId" + ', '.join(unique_alt_id))
                 output.close()
 
     def not_english(self, line):
         return self.find_en.search(line)
 
     @staticmethod
-    def target_headline(line):
-        return '"headline": "TABLE-' not in line and "*TOP NEWS*-Front Pag" not in line
+    def target_headline(data):
+        return '"headline": "TABLE-' not in data and "*TOP NEWS*-Front Pag" not in data
+
+    def new_story(self, unique_altId, data):
+        m_new_story = self.find_altId.search(data)
+        alt_id = m_new_story.group(1)
+        if alt_id in unique_altId:
+            print (alt_id + "\n")
+            return False
+        else:
+            unique_altId.add(alt_id)
+            return True
 
     def remove_output_file(self):
         for the_file in os.listdir(self.output_path):
