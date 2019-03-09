@@ -20,8 +20,8 @@ class DataCleaner:
         self.input_file_lst = input_file_lst
         self.output_path = output_path
         self.output_file = output_path + "en_output.dat"
-        self.intermediate_language = output_path + "0_language.dat"
-        self.intermediate_headline = output_path + "1_headline.dat"
+        self.intermediate_filtered = output_path + "0_filtered.dat"
+        self.find_en = re.compile("\"language\": \"" + self.language + "\"")
         self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
         self.find_data = re.compile("\"data\": {(.*?)}}")
@@ -30,7 +30,7 @@ class DataCleaner:
     def __call__(self):
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_all_conditions()
-        # self.gen_data()
+        self.gen_data()
         # self.gen_headline_lst()
         # self.gen_body_lst()
 
@@ -52,7 +52,7 @@ class DataCleaner:
 
     def gen_data(self):
         """Function: To generate the list and dictionary needed for NGRAM model"""
-        with open(self.output_file, encoding="utf-8") as f:
+        with open(self.intermediate_filtered, encoding="utf-8") as f:
             for line in f:
                 m_headline = self.find_headline.search(line)
                 m_headline = m_headline.group(1)
@@ -71,29 +71,23 @@ class DataCleaner:
                         self.m_dict[m_time].append(self.data_regx_clean(m_body))
 
     def filter_all_conditions(self):
-        self.filter_language()
-        self.filter_headline()
-
-    def filter_language(self):
-        """This function is to filter news according the language and to keep only the content of data section"""
-        find_lg = re.compile("\"language\": \"" + self.language + "\"")
         for input_file in self.input_file_lst:
             with open(input_file, encoding="utf-8") as f:
-                output = open(self.intermediate_language, "a+", encoding="utf-8")
+                output = open(self.intermediate_filtered, "a+", encoding="utf-8")
                 for line in f:
-                    if find_lg.search(line):
+                    if self.not_english(line):
                         m_data = self.find_data.search(line)
-                        output.write(m_data.group(1) + '\n')
-            output.close()
+                        data = m_data.group(1)
+                        if self.target_headline(data):
+                            output.write(data + "\n")
+                output.close()
 
-    def filter_headline(self):
-        headline_table = re.compile(r'"headline": "TABLE-.*"')
-        with open(self.intermediate_language, encoding="utf-8") as f:
-            output = open(self.intermediate_headline, "a+", encoding="utf-8")
-            for line in f:
-                if not headline_table.search(line) and "*TOP NEWS*-Front Pag" not in line:
-                    output.write(line)
-        output.close()
+    def not_english(self, line):
+        return self.find_en.search(line)
+
+    @staticmethod
+    def target_headline(line):
+        return '"headline": "TABLE-' not in line and "*TOP NEWS*-Front Pag" not in line
 
     def remove_output_file(self):
         for the_file in os.listdir(self.output_path):
