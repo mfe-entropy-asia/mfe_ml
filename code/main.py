@@ -4,6 +4,7 @@ from data_cleaner import DataCleaner
 # from nltk import word_tokenize
 # from nltk import sent_tokenize
 # from nltk import Text
+import numpy as np
 dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
 dat_clean()
 # for i in range(8):
@@ -13,4 +14,5 @@ dat_clean()
 #     print(i)
 
 for key in dat_clean.m_dict:
-    print(dat_clean.m_dict[key][3])
+    if key == np.datetime64('2018-06-01'):
+        print(dat_clean.m_dict[key][3])
