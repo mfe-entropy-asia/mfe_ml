@@ -4,13 +4,9 @@ import numpy as np
 
 
 class DataCleaner:
-    """
-    Class name: DataCleaner
-    CLass Member: TBA
-
-    """
     def __init__(self, language, input_file_lst, output_path):
         """
+        Class name: DataCleaner
 
         :param language: Language we are interested in, English by default
         :param input_file_lst: list of files paths
@@ -36,6 +32,12 @@ class DataCleaner:
         self.find_angle_quotation = re.compile(r'<.*?>')
 
     def __call__(self):
+        """
+        This is the call function of the class.
+
+        :return: will call the data clean functions and will generate the data
+        for ngram model
+        """
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_all_conditions()
         self.gen_data()
@@ -54,13 +56,13 @@ class DataCleaner:
     #             m_body = self.find_body.search(line)
     #             self.body_lst.append(m_body.group(1))
     # @staticmethod
-    def data_regx_clean(self, string: str):
+    def data_clean(self, string: str):
         """
-        Function that contains all the data processing:
-        \n \r
-        remove quotation
-        remove stars
-        call remove_brackets
+        Function which will do the data clean
+        Remove the parentheses
+
+        :param string: the input string data
+        :return: string after data clean
         """
         string = self.remove_brackets(string)
         string = string.replace('\\n', '\n').replace('\\"', '').replace('\\r', '\r').replace('*', '')
@@ -69,7 +71,7 @@ class DataCleaner:
     def gen_data(self):
         """
 
-        :return: unction: list and dictionary needed for NGRAM model
+        :return: list and dictionary needed for NGRAM model
         """
         with open(self.intermediate_filtered, encoding="utf-8") as f:
             for line in f:
@@ -80,14 +82,14 @@ class DataCleaner:
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(self.data_regx_clean(m_headline))
-                    self.body_lst.append(self.data_regx_clean(m_body))
+                    self.headline_lst.append(self.data_clean(m_headline))
+                    self.body_lst.append(self.data_clean(m_body))
                     m_time = np.datetime64(m_time).astype('datetime64[D]')
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
-                        self.m_dict[m_time].append(self.data_regx_clean(m_body))
+                        self.m_dict[m_time].append(self.data_clean(m_body))
                     else:
-                        self.m_dict[m_time].append(self.data_regx_clean(m_body))
+                        self.m_dict[m_time].append(self.data_clean(m_body))
 
     def filter_all_conditions(self):
         unique_alt_id = set()
@@ -122,7 +124,10 @@ class DataCleaner:
 
     def remove_brackets(self, data: str):
         """
-        Remove ((.*)) and [.*] and <.*> and nested parentheses
+        emove ((.*)) and [.*] and <.*> and nested parentheses
+
+        :param data:  Input string data
+        :return: String data after processing.
         """
         # if self.find_double_parentheses.match(data):
         #     print("yes")
@@ -138,7 +143,7 @@ class DataCleaner:
         """
 
         :param data: input string
-        :return: data with all parentheses removesd
+        :return: data with all parentheses removed
         """
         result = ''
         depth = 0
