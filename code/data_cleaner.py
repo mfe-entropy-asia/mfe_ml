@@ -82,14 +82,14 @@ class DataCleaner:
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(self.data_clean(m_headline))
-                    self.body_lst.append(self.data_clean(m_body))
+                    self.headline_lst.append(self.data_clean(m_headline).lower())
+                    self.body_lst.append(self.data_clean(m_body).lower())
                     m_time = np.datetime64(m_time).astype('datetime64[D]')
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
-                        self.m_dict[m_time].append(self.data_clean(m_body))
+                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
                     else:
-                        self.m_dict[m_time].append(self.data_clean(m_body))
+                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
 
     def filter_all_conditions(self):
         unique_alt_id = set()
