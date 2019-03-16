@@ -20,13 +20,26 @@ class DataCleaner:
         self.output_path = output_path
         self.output_file = output_path + "en_output.dat"
         self.intermediate_filtered = output_path + "0_filtered.dat"
+        # To filter language
         self.find_en = re.compile("\"language\": \"" + self.language + "\"")
+
+        # To find uniq article ID
         self.find_altId = re.compile('"altId": "(.*?)",')
+
+        # To match the headline content
         self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
+
+        # To match the body content
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
+
+        # To extract data section
         self.find_data = re.compile("\"data\": {(.*?)}}")
+
+        # Time
         self.find_time = re.compile('"versionCreated": "(.*?)"')
-        self.find_double_parentheses = re.compile(r'\(\(.*?\)\)') 
+        # The Reuters footnote(e.g. ((Diaries@thomsonreuters.com))) needs to be removed
+        # self.find_double_parentheses = re.compile(r'\(\(.*?\)\)')   # The Reuters footnote needs to be removed
+
         # self.find_parentheses = re.compile(r'\(.*?\)')  # Wrong !!!! Not applicable for nested parentheses 
         self.find_bracket = re.compile(r'\[.*?\]')
         self.find_angle_quotation = re.compile(r'<.*?>')
@@ -38,23 +51,12 @@ class DataCleaner:
         :return: will call the data clean functions and will generate the data
         for ngram model
         """
+
+        print(self.__repr__())
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_all_conditions()
         self.gen_data()
-        # self.gen_headline_lst()
-        # self.gen_body_lst()
 
-    # def gen_headline_lst(self):
-    #     with open(self.output_file, encoding="utf-8") as f:
-    #         for line in f:
-    #             m_headline = self.find_headline.search(line)
-    #             self.headline_lst.append(m_headline.group(1))
-    #
-    # def gen_body_lst(self):
-    #     with open(self.output_file, encoding="utf-8") as f:
-    #         for line in f:
-    #             m_body = self.find_body.search(line)
-    #             self.body_lst.append(m_body.group(1))
     # @staticmethod
     def data_clean(self, string: str):
         """
@@ -84,7 +86,7 @@ class DataCleaner:
                 if m_body != '':
                     self.headline_lst.append(self.data_clean(m_headline).lower())
                     self.body_lst.append(self.data_clean(m_body).lower())
-                    m_time = np.datetime64(m_time).astype('datetime64[D]')
+                    m_time = np.datetime64(m_time[:10])
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
                         self.m_dict[m_time].append(self.data_clean(m_body).lower())
@@ -92,6 +94,12 @@ class DataCleaner:
                         self.m_dict[m_time].append(self.data_clean(m_body).lower())
 
     def filter_all_conditions(self):
+        """
+        This is the function to filter the English language article, for articles with the same article ID,
+        we keep the first one in the chain.
+        :return: "0_filterd.dat" file which contains the data section of the raw data with only English document and
+        unique ID articles
+        """
         unique_alt_id = set()
         for input_file in self.input_file_lst:
             with open(input_file, encoding="utf-8") as f:
@@ -124,14 +132,13 @@ class DataCleaner:
 
     def remove_brackets(self, data: str):
         """
-        emove ((.*)) and [.*] and <.*> and nested parentheses
+        Remove ((.*)) and [.*] and <.*> and nested parentheses
 
         :param data:  Input string data
         :return: String data after processing.
         """
-        # if self.find_double_parentheses.match(data):
-        #     print("yes")
-        data = self.find_double_parentheses.sub(r'', data)
+
+        # data = self.find_double_parentheses.sub(r'', data)
         # data = self.find_parentheses.sub(r'', data)
         data = self.find_bracket.sub(r'', data)
         data = self.find_angle_quotation.sub(r'', data)
@@ -156,20 +163,20 @@ class DataCleaner:
                 result += letter
         return result
 
-    def new_story (self, unique_altId, data):
+    def new_story (self, unique_altid, data):
         """
 
-        :param unique_altId:
+        :param unique_altid:
         :param data: Input string
         :return: Boolean to indicate if the altId has appeared only once
         """
         m_new_story = self.find_altId.search(data)
         alt_id = m_new_story.group(1)
-        if alt_id in unique_altId:
+        if alt_id in unique_altid:
             # print (alt_id + "\n")
             return False
         else:
-            unique_altId.add(alt_id)
+            unique_altid.add(alt_id)
             return True
 
     def remove_output_file(self):
@@ -186,3 +193,27 @@ class DataCleaner:
             except Exception as e:
                 print(e)
         print("Output File Removed!")
+
+    def __repr__(self):
+        """
+        
+        :return: The information of the class instance 
+        """
+        return "Data Cleaner Class initiates with \nLanguage: " + self.language.upper() + "\n" + "Input Files: " +\
+               str(self.input_file_lst) + "\nOutputs: " + self.output_file
+
+
+#  Executed only when data_cleaner is called as the main function, this part of code is for debug purpose
+if __name__ == '__main__':
+    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
+    dat_clean()
+    # for i in range(8):
+    #     print(dat_clean.headline_lst[i])
+    # tokens = [word_tokenize(sentence) for sentence in sent_tokenize(dat_clean.body_lst[4])]
+    # for i in tokens:
+    #     print(i)
+
+    for key in dat_clean.m_dict:
+        if key == np.datetime64('2018-06-01'):
+            print(dat_clean.m_dict[key][3])
+
