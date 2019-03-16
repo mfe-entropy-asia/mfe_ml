@@ -1,5 +1,6 @@
 import os
 
+
 class CompanyAnalyst:
     def __init__(self):
         self.filtered_path = "./data/intermediate/0_filtered.dat"

@@ -1,18 +1,22 @@
-from data_cleaner import DataCleaner
-# from nltk import ngrams
-# from nltk import FreqDist
-# from nltk import word_tokenize
-# from nltk import sent_tokenize
-# from nltk import Text
+from FourGramModel import FourGramModel
+import pickle
 import numpy as np
-dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
-dat_clean()
-# for i in range(8):
-#     print(dat_clean.headline_lst[i])
-# tokens = [word_tokenize(sentence) for sentence in sent_tokenize(dat_clean.body_lst[4])]
-# for i in tokens:
-#     print(i)
 
-for key in dat_clean.m_dict:
-    if key == np.datetime64('2018-06-01'):
-        print(dat_clean.m_dict[key][3])
+pickle_in = open("./data/intermediate/dict.pickle", "rb")
+processed_news_dict = pickle.load(pickle_in)
+
+fitted_models = {}
+for key in processed_news_dict:
+    if key < np.datetime64('2018-06-08'):
+        continue
+    else:
+        fitted_models[key] = FourGramModel(processed_news_dict, key)
+pickle_out = open("./data/intermediate/model.pickle", "wb")
+pickle.dump(fitted_models, pickle_out)
+pickle_out.close()
+
+# pickle_in = open("./data/intermediate/model.pickle", "rb")
+# lm = pickle.load(pickle_in)
+# print(lm.score('held', ['zealands', 'currency']))
+
+

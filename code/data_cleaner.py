@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pickle
 
+
 class DataCleaner:
     def __init__(self, language, input_file_lst, output_path):
         """
@@ -45,11 +46,6 @@ class DataCleaner:
         self.find_angle_quotation = re.compile(r'<.*?>')
 
     def __call__(self):
-        """
-        This is the call function of the class.
-        :return: will call the data clean functions and will generate the data
-        for ngram model
-        """
         print(self.__repr__())
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_all_conditions()
@@ -119,6 +115,7 @@ class DataCleaner:
     @staticmethod
     def target_headline(data):
         """
+        Function to tell if the headline is wanted
 
         :param data: Input string
         :return: Boolean to indicate if the headline is our target headline
@@ -127,6 +124,7 @@ class DataCleaner:
 
     def remove_brackets(self, data: str):
         """
+
         Remove ((.*)) and [.*] and <.*> and nested parentheses
 
         :param data:  Input string data
@@ -199,7 +197,8 @@ class DataCleaner:
 
 #  Executed only when data_cleaner is called as the main function, this part of code is for debug purpose
 if __name__ == '__main__':
-    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt", "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
+    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
+                                   "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
     dat_clean()
     # for i in range(8):
     #     print(dat_clean.headline_lst[i])
