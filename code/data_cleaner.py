@@ -1,7 +1,7 @@
 import re
 import os
 import numpy as np
-
+import pickle
 
 class DataCleaner:
     def __init__(self, language, input_file_lst, output_path):
@@ -47,32 +47,27 @@ class DataCleaner:
     def __call__(self):
         """
         This is the call function of the class.
-
         :return: will call the data clean functions and will generate the data
         for ngram model
         """
-
         print(self.__repr__())
         self.remove_output_file()  # Remove the output file if it exists
         self.filter_all_conditions()
         self.gen_data()
 
-    # @staticmethod
     def data_clean(self, string: str):
         """
         Function which will do the data clean
         Remove the parentheses
-
         :param string: the input string data
         :return: string after data clean
         """
         string = self.remove_brackets(string)
         string = string.replace('\\n', '\n').replace('\\"', '').replace('\\r', '\r').replace('*', '')
-        return string
+        return string.lower()
 
     def gen_data(self):
         """
-
         :return: list and dictionary needed for NGRAM model
         """
         with open(self.intermediate_filtered, encoding="utf-8") as f:
@@ -84,14 +79,15 @@ class DataCleaner:
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(self.data_clean(m_headline).lower())
-                    self.body_lst.append(self.data_clean(m_body).lower())
+                    self.headline_lst.append(self.data_clean(m_headline))
+                    self.body_lst.append(self.data_clean(m_body))
                     m_time = np.datetime64(m_time[:10])
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
-                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
-                    else:
-                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
+                    self.m_dict[m_time].append(self.data_clean(m_body))
+        pickle_out = open(self.output_path + "dict.pickle", "wb")
+        pickle.dump(self.m_dict, pickle_out)
+        pickle_out.close()
 
     def filter_all_conditions(self):
         """
@@ -115,7 +111,6 @@ class DataCleaner:
 
     def not_english(self, line):
         """
-
         :param line: Input line
         :return: True or False to indicate if the language is English
         """
@@ -196,8 +191,7 @@ class DataCleaner:
 
     def __repr__(self):
         """
-        
-        :return: The information of the class instance 
+        :return: The information of the class instance
         """
         return "Data Cleaner Class initiates with \nLanguage: " + self.language.upper() + "\n" + "Input Files: " +\
                str(self.input_file_lst) + "\nOutputs: " + self.output_file
@@ -205,7 +199,7 @@ class DataCleaner:
 
 #  Executed only when data_cleaner is called as the main function, this part of code is for debug purpose
 if __name__ == '__main__':
-    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt"], "./data/intermediate/")
+    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt", "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
     dat_clean()
     # for i in range(8):
     #     print(dat_clean.headline_lst[i])
