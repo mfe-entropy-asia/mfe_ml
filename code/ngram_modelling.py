@@ -30,13 +30,12 @@ train, vocab = padded_everygram_pipeline(4, text)  # This will generate unigram,
 
 lm = MLE(4)
 lm.fit(train, vocab)
-# 'verdascos', 'early', 'charge'), FreqDist({'he': 1})
 
 
-# a = sorted(lm.counts[4].items())
-# print(a[::-400])
-for i in lm.counts[4]:  # print all the 3 grams
-    print(i)
+a = sorted(lm.counts[4].items())
+print(a[::-400])
+# for i in lm.counts[4]:  # print all the 3 grams
+#     print(i)
 print(lm.score('</s>', ['your', 'scheduler', '</s>']))
 # print(len(lm.vocab))
 # print(lm.counts)
