@@ -1,4 +1,5 @@
 /data/raw
+/data/analysis
 /data/intermediate
 .idea/
 **/__pycache__/**/*

@@ -57,7 +57,6 @@ class DataCleaner:
         self.filter_all_conditions()
         self.gen_data()
 
-    # @staticmethod
     def data_clean(self, string: str):
         """
         Function which will do the data clean
@@ -68,11 +67,10 @@ class DataCleaner:
         """
         string = self.remove_brackets(string)
         string = string.replace('\\n', '\n').replace('\\"', '').replace('\\r', '\r').replace('*', '')
-        return string
+        return string.lower()
 
     def gen_data(self):
         """
-
         :return: list and dictionary needed for NGRAM model
         """
         with open(self.intermediate_filtered, encoding="utf-8") as f:
@@ -84,14 +82,12 @@ class DataCleaner:
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    self.headline_lst.append(self.data_clean(m_headline).lower())
-                    self.body_lst.append(self.data_clean(m_body).lower())
+                    self.headline_lst.append(self.data_clean(m_headline))
+                    self.body_lst.append(self.data_clean(m_body))
                     m_time = np.datetime64(m_time[:10])
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
-                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
-                    else:
-                        self.m_dict[m_time].append(self.data_clean(m_body).lower())
+                    self.m_dict[m_time].append(self.data_clean(m_body))
 
     def filter_all_conditions(self):
         """
@@ -115,7 +111,6 @@ class DataCleaner:
 
     def not_english(self, line):
         """
-
         :param line: Input line
         :return: True or False to indicate if the language is English
         """
