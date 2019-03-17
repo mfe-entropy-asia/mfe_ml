@@ -56,28 +56,28 @@ if __name__ == '__main__':
     translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
     pickle_in = open("./data/intermediate/dict.pickle", "rb")
     processed_news_dict = pickle.load(pickle_in)
-    model_1 = FourGramModel(processed_news_dict, np.datetime64('2018-06-08'))
-    model_1()
-
-    pickle_out = open("./data/intermediate/model.pickle", "wb")
-    pickle.dump(model_1.lm, pickle_out)
-    pickle_out.close()
-    a = sorted(model_1.lm.counts[3].items())
-    print(a[::-400])
-    # text = []
-    # for i in range(3):
-    #     for body in processed_news_dict[np.datetime64('2018-06-01')+i]:
-    #         # if body != '':
-    #         text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
+    # model_1 = FourGramModel(processed_news_dict, np.datetime64('2018-06-08'))
+    # model_1()
     #
+    # pickle_out = open("./data/intermediate/model.pickle", "wb")
+    # pickle.dump(model_1.lm, pickle_out)
+    # pickle_out.close()
+    # a = sorted(model_1.lm.counts[3].items())
+    # print(a[::-400])
+    text = []
+    for i in range(40):
+        for body in processed_news_dict[np.datetime64('2018-06-01')+i]:
+            # if body != '':
+            text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
+
     # date = np.datetime64('2018-06-01') + 4
     # present_day_text = []
     # for body in processed_news_dict[date]:
     #     present_day_text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
     # text_fourgram = [ngrams(sent, 4) for sent in present_day_text]
-    # train, vocab = padded_everygram_pipeline(4, text)  # This will generate unigram, bigram, trigram and fourgram
-    # lm = MLE(4)
-    # lm.fit(train, vocab)
+    train, vocab = padded_everygram_pipeline(4, text)  # This will generate unigram, bigram, trigram and fourgram
+    lm = MLE(4)
+    lm.fit(train, vocab)
     # a = sorted(lm.counts[4].items())
     # print(a[::-400])
     # for i in lm.counts[4]:  # print all the 3 grams
