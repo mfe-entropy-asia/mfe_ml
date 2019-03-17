@@ -1,4 +1,4 @@
-from FourGramModel import FourGramModel
+from four_gram_model import FourGramModel
 import pickle
 import numpy as np
 
