@@ -7,11 +7,11 @@ import time
 from multiprocessing import Pool, Queue
 
 
-dict_pickle_path = "./data/intermediate/dict.pickle"
+dict_pickle_path = "../data/intermediate/dict.pickle"
 
 if not os.path.isfile(dict_pickle_path):
-        dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
-                                       "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
+        dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt", "../data/raw/News.RTRS.201807.0214.txt",
+                                       "../data/raw/News.RTRS.201808.0214.txt"], "../data/intermediate/")
         dat_clean()
 
 pickle_in = open(dict_pickle_path, "rb")
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     print("All models fitted, total Time:" + str(end - start))
 
     print("Dumping Pickle file.........\n")
-    pickle_out = open("./data/intermediate/model.pickle", "wb")
+    pickle_out = open("../data/intermediate/model.pickle", "wb")
     pickle.dump(fitted_models, pickle_out)
     pickle_out.close()
     print("Finish dumping\n")

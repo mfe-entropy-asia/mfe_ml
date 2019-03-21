@@ -197,8 +197,8 @@ class DataCleaner:
 
 #  Executed only when data_cleaner is called as the main function, this part of code is for debug purpose
 if __name__ == '__main__':
-    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
-                                   "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
+    dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt", "../data/raw/News.RTRS.201807.0214.txt",
+                                   "../data/raw/News.RTRS.201808.0214.txt"], "../data/intermediate/")
     dat_clean()
     # for i in range(8):
     #     print(dat_clean.headline_lst[i])

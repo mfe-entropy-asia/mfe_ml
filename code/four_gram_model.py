@@ -69,11 +69,11 @@ class FourGramModel:
 #  Only executed when this file is called directly, this part of code is for debug purpose only
 if __name__ == '__main__':
     translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
-    pickle_in = open("./data/intermediate/dict.pickle", "rb")
+    pickle_in = open("../data/intermediate/dict.pickle", "rb")
     processed_news_dict = pickle.load(pickle_in)
     model_1 = FourGramModel(processed_news_dict, np.datetime64('2018-06-08'))
     model_1()
-    pickle_out = open("./data/intermediate/model.pickle", "wb")
+    pickle_out = open("../data/intermediate/model.pickle", "wb")
     pickle.dump(model_1.lm, pickle_out)
     pickle_out.close()
     # a = sorted(model_1.lm.counts[3].items())

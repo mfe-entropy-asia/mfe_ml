@@ -58,10 +58,6 @@ class DataCleaner:
             # print("Time %s is not in dictionary" % m_time)
             self.m_dict[m_time] = []
         self.m_dict[m_time].append(self.data_clean(m_body))
-        # print(self.m_dict[m_time][0])
-        # pickle_out = open(self.output_path + "dict.pickle", "wb")
-        # pickle.dump(self.m_dict, pickle_out)
-        # pickle_out.close()
         
     def data_clean(self, string: str):
         """
@@ -140,20 +136,18 @@ class DataCleaner:
 
 
 if __name__ == '__main__':
-    print("data clean called directly")
+    print("data_cleaner.py called directly!!!")
     Dat_clean = DataCleaner()
-
     start = time.time()
     print("Cleaning data, starting time: %s ..." % start)
-    output_file = open("./out.dat", "w", encoding="utf-8")
-    input_file_list = ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
-                       "./data/raw/News.RTRS.201808.0214.txt"]
+    output_file = open("../out.dat", "w", encoding="utf-8")
+    input_file_list = ["../data/raw/News.RTRS.201806.0214.txt", "../data/raw/News.RTRS.201807.0214.txt",
+                       "../data/raw/News.RTRS.201808.0214.txt"]
     for file in input_file_list:
         with open(file, encoding="utf-8") as f:
             line_nu = 0
             for line in f:
                 if line_nu != 0:
-                    # print(line.encode("utf-8"))
                     if Dat_clean(line):
                         m_data = Dat_clean.find_data.search(line)
                         write_line = m_data.group(1)
@@ -162,9 +156,7 @@ if __name__ == '__main__':
     output_file.close()
     end = time.time()
     print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
-    # for key in Dat_clean.m_dict:
-    #     print(Dat_clean.m_dict[key][1])
-    pickle_out = open("./data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
+    pickle_out = open("../data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
     pickle.dump(Dat_clean.m_dict, pickle_out)
     pickle_out.close()
 
