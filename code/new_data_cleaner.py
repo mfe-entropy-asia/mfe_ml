@@ -5,6 +5,7 @@ import numpy as np
 import time
 import pickle
 
+
 class DataCleaner:
     def __init__(self):
         self.m_dict = {}
@@ -37,8 +38,8 @@ class DataCleaner:
         self.find_angle_quotation = re.compile(r'<.*?>')
         self.unique_alt_id = set()
 
-    def __call__(self, data):
-        if self.valid_english_story(data):
+    def __call__(self, data, article_dict,):
+        if self.valid_english_story(article_dict, data):
             # print("This line is valid!")
             self.gen_dict(data)
             return True
@@ -73,9 +74,9 @@ class DataCleaner:
         string = string.replace('\\n', '\n').replace('\\"', '').replace('\\r', '\r').replace('*', '')
         return string.lower()
 
-    def valid_english_story(self, data):
+    def valid_english_story(self, article_dict, data):
         return self.if_body_not_empty(data) and self.if_en(data) and self.target_headline(data) \
-               and self.new_story(data)
+               and self.new_story(article_dict,data)
         
     def if_en(self, data):
         if self.find_en.search(data):
@@ -95,14 +96,14 @@ class DataCleaner:
     def target_headline(data):
         return '"headline": "TABLE-' not in data and "*TOP NEWS*" not in data and "DIARY-" not in data
 
-    def new_story(self, data):
+    def new_story(self, article_dict, data):
         m_new_story = self.find_altId.search(data)
         alt_id = m_new_story.group(1)
-        if alt_id in self.unique_alt_id:
+        if alt_id in article_dict:
             # print (alt_id + "\n")
             return False
         else:
-            self.unique_alt_id.add(alt_id)
+            article_dict[alt_id] = 1
             return True
             
     @staticmethod

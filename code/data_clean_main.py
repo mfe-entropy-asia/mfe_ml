@@ -6,7 +6,7 @@ import numpy as np
 import pickle
 
 
-def clean_a_file_and_return_data(input_file, data_cleaner):
+def clean_a_file_and_return_data(input_file, data_cleaner, article_dict):
     result = []
     with open(input_file, encoding="utf-8") as f:
         line_nu = 0
@@ -14,7 +14,7 @@ def clean_a_file_and_return_data(input_file, data_cleaner):
             if line_nu != 0:
                 # print(line.encode("utf-8"))
                 # data_cleaner(line)
-                if data_cleaner(line):
+                if data_cleaner(line, article_dict):
                     m_data = data_cleaner.find_data.search(line)
                     write_line = m_data.group(1)
                     result.append(write_line + "\n")
@@ -22,14 +22,15 @@ def clean_a_file_and_return_data(input_file, data_cleaner):
     return data_cleaner.m_dict, result
 
 
-def handler(file_list, data_cleaner):
+def handler(file_list, data_cleaner, article_dict):
     p = mp.Pool(3)
     # p.map_async(partial(clean_a_file_and_return_data, data_cleaner=data_cleaner), file_list)
     # p.close()
     # p.join()
     result = {}
     with open("./data/intermediate/out.dat", "w", encoding="utf-8") as f:
-        for return_dict, return_list in p.imap(partial(clean_a_file_and_return_data, data_cleaner=data_cleaner),
+        for return_dict, return_list in p.imap(partial(clean_a_file_and_return_data, data_cleaner=data_cleaner,
+                                                       article_dict=article_dict),
                                                file_list):
             result.update(return_dict)
             f.writelines(return_list)
@@ -38,13 +39,13 @@ def handler(file_list, data_cleaner):
 
 if __name__ == '__main__':
     manager = mp.Manager()
-    manager.list([])
+    shared_article_dict = manager.dict()
     Dat_clean = DataCleaner()
     input_file_list = ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
                        "./data/raw/News.RTRS.201808.0214.txt"]
     print("Cleaning data ...")
     start = time.time()
-    my_dict = handler(input_file_list, Dat_clean)
+    my_dict = handler(input_file_list, Dat_clean, shared_article_dict)
     # p = mp.Pool(3)
     # p.map_async(partial(clean_a_file_and_return_data, data_cleaner=Dat_clean), input_file_list)
     # p.close()
