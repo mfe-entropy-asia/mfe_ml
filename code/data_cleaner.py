@@ -120,7 +120,7 @@ class DataCleaner:
         :param data: Input string
         :return: Boolean to indicate if the headline is our target headline
         """
-        return '"headline": "TABLE-' not in data and "*TOP NEWS*-Front Pag" not in data and "DIARY-" not in data
+        return '"headline": "TABLE-' not in data and "*TOP NEWS*" not in data and "DIARY-" not in data
 
     def remove_brackets(self, data: str):
         """

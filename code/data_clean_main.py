@@ -3,6 +3,7 @@ import time
 import multiprocessing as mp
 from functools import partial
 import numpy as np
+import pickle
 
 
 def clean_a_file_and_return_data(input_file, data_cleaner):
@@ -27,7 +28,7 @@ def handler(file_list, data_cleaner):
     # p.close()
     # p.join()
     result = {}
-    with open("./out.dat", "w", encoding="utf-8") as f:
+    with open("./data/intermediate/out.dat", "w", encoding="utf-8") as f:
         for return_dict, return_list in p.imap(partial(clean_a_file_and_return_data, data_cleaner=data_cleaner),
                                                file_list):
             result.update(return_dict)
@@ -36,6 +37,8 @@ def handler(file_list, data_cleaner):
 
 
 if __name__ == '__main__':
+    manager = mp.Manager()
+    manager.list([])
     Dat_clean = DataCleaner()
     input_file_list = ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
                        "./data/raw/News.RTRS.201808.0214.txt"]
@@ -50,6 +53,9 @@ if __name__ == '__main__':
     #     clean_a_file_and_return_data(file, Dat_clean)
     end = time.time()
     print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
+    pickle_out = open("./data/intermediate/dict_with_new_cleaner_multiple_process.pickle", "wb")
+    pickle.dump(my_dict, pickle_out)
+    pickle_out.close()
     # print(Dat_clean.m_dict)
     # for key in my_dict:
     #     if key == np.datetime64('2018-06-08'):

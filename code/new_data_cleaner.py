@@ -3,7 +3,7 @@ import re
 import os
 import numpy as np
 import time
-
+import pickle
 
 class DataCleaner:
     def __init__(self):
@@ -75,7 +75,7 @@ class DataCleaner:
 
     def valid_english_story(self, data):
         return self.if_body_not_empty(data) and self.if_en(data) and self.target_headline(data) \
-               and self.new_story(self.unique_alt_id, data)
+               and self.new_story(data)
         
     def if_en(self, data):
         if self.find_en.search(data):
@@ -93,16 +93,16 @@ class DataCleaner:
 
     @staticmethod
     def target_headline(data):
-        return '"headline": "TABLE-' not in data and "*TOP NEWS*-Front Pag" not in data and "DIARY-" not in data  
+        return '"headline": "TABLE-' not in data and "*TOP NEWS*" not in data and "DIARY-" not in data
 
-    def new_story (self, unique_altid, data):
+    def new_story(self, data):
         m_new_story = self.find_altId.search(data)
         alt_id = m_new_story.group(1)
-        if alt_id in unique_altid:
+        if alt_id in self.unique_alt_id:
             # print (alt_id + "\n")
             return False
         else:
-            unique_altid.add(alt_id)
+            self.unique_alt_id.add(alt_id)
             return True
             
     @staticmethod
@@ -142,25 +142,9 @@ if __name__ == '__main__':
     print("data clean called directly")
     Dat_clean = DataCleaner()
 
-
-
-
-
-
-    # start = time.time()
-    # print("Cleaning data, starting time: %s ..." % start)
-    # p = Pool(3)
-    # file_list = ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
-    #              "./data/raw/News.RTRS.201808.0214.txt"]
-    # for file in file_list:
-    #     p.apply_async(clean_a_file(file,))
-    # p.close()
-    # p.join()
-    # end = time.time()
-    # print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
     start = time.time()
     print("Cleaning data, starting time: %s ..." % start)
-    output_file = open("./out.dat", "a+", encoding="utf-8")
+    output_file = open("./out.dat", "w", encoding="utf-8")
     input_file_list = ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
                        "./data/raw/News.RTRS.201808.0214.txt"]
     for file in input_file_list:
@@ -177,8 +161,10 @@ if __name__ == '__main__':
     output_file.close()
     end = time.time()
     print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
-    for key in Dat_clean.m_dict:
-        print(Dat_clean.m_dict[key][1])
-        
+    # for key in Dat_clean.m_dict:
+    #     print(Dat_clean.m_dict[key][1])
+    pickle_out = open("./data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
+    pickle.dump(Dat_clean.m_dict, pickle_out)
+    pickle_out.close()
 
 
