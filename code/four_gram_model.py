@@ -60,8 +60,16 @@ class FourGramModel:
         # self.train, self.vocab = padded_everygram_pipeline(4, training_text)
         every_gram, vocab = padded_everygram_pipeline(4, training_text)  # This will generate unigram, bigram,
         # trigram and fourgram
-        three_gram = [item for sent in list(every_gram) for item in sent if len(item) == 3]
-        four_gram = [item for sent in list(every_gram) for item in sent if len(item) == 4]
+        three_gram = []
+        four_gram = []
+        for sent in list(every_gram):
+            for item in sent:
+                if len(item) == 3:
+                    three_gram.append(item)
+                elif len(item) == 4:
+                    four_gram.append(item)
+        # three_gram = [item for sent in list(every_gram) for item in sent if len(item) == 3]
+        # four_gram = [item for sent in list(every_gram) for item in sent if len(item) == 4]
         train = [three_gram, four_gram]
         self.lm.fit(train, vocab)
 
