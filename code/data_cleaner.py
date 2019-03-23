@@ -2,7 +2,7 @@ import re
 import os
 import numpy as np
 import pickle
-import time
+
 
 class DataCleaner:
     def __init__(self, language, input_file_lst, output_path):
@@ -68,15 +68,15 @@ class DataCleaner:
         """
         with open(self.intermediate_filtered, encoding="utf-8") as f:
             for line in f:
-                # m_headline = self.find_headline.search(line)
-                # m_headline = m_headline.group(1)
+                m_headline = self.find_headline.search(line)
+                m_headline = m_headline.group(1)
                 m_body = self.find_body.search(line)
                 m_body = m_body.group(1)
                 m_time = self.find_time.search(line)
                 m_time = m_time.group(1)
                 if m_body != '':
-                    # self.headline_lst.append(self.data_clean(m_headline))
-                    # self.body_lst.append(self.data_clean(m_body))
+                    self.headline_lst.append(self.data_clean(m_headline))
+                    self.body_lst.append(self.data_clean(m_body))
                     m_time = np.datetime64(m_time[:10])
                     if m_time not in self.m_dict:
                         self.m_dict[m_time] = []
@@ -104,7 +104,6 @@ class DataCleaner:
                             output.write(data + "\n")
                 # print("uniqueAltId" + ', '.join(unique_alt_id))  # For debug purpose, printing out all article ID
                 output.close()
-        print(len(unique_alt_id))
 
     def not_english(self, line):
         """
@@ -198,19 +197,16 @@ class DataCleaner:
 
 #  Executed only when data_cleaner is called as the main function, this part of code is for debug purpose
 if __name__ == '__main__':
-    dat_clean = DataCleaner("en", ["./data/raw/News.RTRS.201806.0214.txt", "./data/raw/News.RTRS.201807.0214.txt",
-                                   "./data/raw/News.RTRS.201808.0214.txt"], "./data/intermediate/")
-    print("Cleaning data ...")
-    start = time.time()
+    dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt", "../data/raw/News.RTRS.201807.0214.txt",
+                                   "../data/raw/News.RTRS.201808.0214.txt"], "../data/intermediate/")
     dat_clean()
     # for i in range(8):
     #     print(dat_clean.headline_lst[i])
     # tokens = [word_tokenize(sentence) for sentence in sent_tokenize(dat_clean.body_lst[4])]
     # for i in tokens:
     #     print(i)
-    end = time.time()
-    print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
-    # for key in dat_clean.m_dict:
-    #     if key == np.datetime64('2018-06-01'):
-    #         print(dat_clean.m_dict[key][3])
+
+    for key in dat_clean.m_dict:
+        if key == np.datetime64('2018-06-01'):
+            print(dat_clean.m_dict[key][3])
 
