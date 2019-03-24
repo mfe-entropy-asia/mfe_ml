@@ -13,7 +13,6 @@ this main function generates two files:
 1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc. 
 """
 
-
 def clean_a_file_and_return_data(input_file, data_processor, article_dict):
     # result = []
     with open(input_file, encoding="utf-8") as f:
@@ -76,4 +75,4 @@ if __name__ == '__main__':
     #     if key == np.datetime64('2018-06-08'):
     #         print(my_dict[key][0])
 
-# main()
+

@@ -12,6 +12,7 @@ class DataCleaner:
         self.m_data_series = pd.Series()
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
         self.find_time = re.compile('"versionCreated": "(.*?)"')
+        self.find_source_link = re.compile(r'-- source link:.*$', re.IGNORECASE)
         self.find_keywords = re.compile(r'keywords:.*$', re.IGNORECASE)
         self.find_bracket = re.compile(r'\[.*?\]')
         self.find_angle_quotation = re.compile(r'<.*?>')
@@ -25,7 +26,7 @@ class DataCleaner:
         self.unique_alt_id = set()
 
     def __call__(self):
-        print("%s entries" % len(self.filtered.index))
+        print("%s days" % len(self.filtered.index))
         for each_time in self.filtered:
             for data_line in each_time:
                 self.clean_up(data_line)
@@ -38,7 +39,9 @@ class DataCleaner:
         m_time = np.datetime64(m_time[:10])
         if m_time not in self.m_data_series.index:
             self.m_data_series.at[m_time] = []
-        self.m_data_series.at[m_time].append(self.data_clean(m_body))
+        cleaned = self.data_clean(m_body)
+        if cleaned:
+            self.m_data_series.at[m_time].append(cleaned)
 
     def data_clean(self, target: str):
         """
@@ -50,13 +53,14 @@ class DataCleaner:
         target = self.remove_brackets(target)
         target = self.remove_header(target)
         target = self.remove_keywords(target)
+        target = self.remove_source_link(target)
         target = target.replace('\\n', ' ') \
             .replace('\\\"', '') \
             .replace('\\r', ' ') \
             .replace('*', '') \
             .replace('“', '') \
             .replace('”', '')
-        return target.lower()
+        return target.lower().strip()
 
     @staticmethod
     def target_headline(data):
@@ -122,6 +126,9 @@ class DataCleaner:
 
     def remove_keywords(self, data):
         return self.find_keywords.sub(r'', data)
+
+    def remove_source_link(self, data):
+        return self.find_source_link.sub(r'', data)
 
     def remove_brackets(self, data):
         """
