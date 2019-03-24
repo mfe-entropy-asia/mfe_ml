@@ -7,6 +7,11 @@ from functools import partial
 import pandas as pd
 import pickle
 
+"""
+this main function generates two files: 
+0_filterd: to filter original raw data line by line
+1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc. 
+"""
 
 def clean_a_file_and_return_data(input_file, data_processor, article_dict):
     # result = []
