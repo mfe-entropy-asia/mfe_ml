@@ -37,13 +37,13 @@ def filter_handler(file_list, data_processor, article_dict):
 if __name__ == '__main__':
     manager = mp.Manager()
     shared_article_dict = manager.dict()
-    filter = DataFilter()
+    my_filter = DataFilter()
     input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt",
                        "../../data/raw/News.RTRS.201807.0214.txt",
                        "../../data/raw/News.RTRS.201808.0214.txt"]
     print("\nFiltering data ...")
     start = time.time()
-    filtered_series = filter_handler(["../../data/raw/News.RTRS.201806.0214.txt"], filter, shared_article_dict)
+    filtered_series = filter_handler(input_file_list, my_filter, shared_article_dict)
     end = time.time()
     print("Finished in: %s seconds" % (end - start))
 
