@@ -212,37 +212,34 @@ if __name__ == '__main__':
     Dat_clean = DataCleaner()
     start = time.time()
     print("Cleaning data, starting time: %s ..." % start)
-    output_file = open("../out.dat", "w", encoding="utf-8")
+    output_file = open("../../data/intermediate/out_single_process.dat", "w", encoding="utf-8")
     input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt", "../../data/raw/News.RTRS.201807.0214.txt",
                        "../../data/raw/News.RTRS.201808.0214.txt"]
     unique_altid_dict = {}
-    for file in input_file_list:
-        with open(file, encoding="utf-8") as f:
-            line_nu = 0
-            for line in f:
-                if line_nu != 0:
-                    if Dat_clean(line, unique_altid_dict):
-                        m_data = Dat_clean.find_data.search(line)
-                        write_line = m_data.group(1)
-                        output_file.write(write_line + "\n")
-                line_nu += 1
-
     # for file in input_file_list:
     #     with open(file, encoding="utf-8") as f:
-    #         line_nu = 0
+    #         next(f)
     #         for line in f:
-    #             if line_nu != 0:
-    #                 Dat_clean(line, unique_altid_dict)
-    #             line_nu += 1
-    # for i in Dat_clean.m_data_series:
-    #     # print(len(i))
-    #     for body in i:
-    #         output_file.write(body + '\n')
+    #             if Dat_clean(line, unique_altid_dict):
+    #                 m_data = Dat_clean.find_data.search(line)
+    #                 write_line = m_data.group(1)
+    #                 output_file.write(write_line + "\n")
+
+    for file in input_file_list:
+        with open(file, encoding="utf-8") as f:
+            next(f)
+            for line in f:
+                Dat_clean(line, unique_altid_dict)
+                
+    for i in Dat_clean.m_data_series:
+        # print(len(i))
+        for body in i:
+            output_file.write(body + '\n')
     output_file.close()
     end = time.time()
     print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
     # print(Dat_clean.m_data_series.at[np.datetime64('2018-06-08')][1])
-    pickle_out = open("../../data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
+    pickle_out = open("../../data/intermediate/series_with_new_cleaner_single_process.pickle", "wb")
     pickle.dump(Dat_clean.m_data_series, pickle_out)
     pickle_out.close()
 

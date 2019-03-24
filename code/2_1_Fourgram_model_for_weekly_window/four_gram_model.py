@@ -19,11 +19,11 @@ from nltk.util import ngrams
 class FourGramModel:
     def __init__(self, input_data_frame, input_date):
         """
-        To instantiate the 4-gram model, we need to provide the dataframe , and the date of interest
+        To instantiate the 4-gram model, we need to provide the series , and the date of interest
 
-        :param input_data_frame: input data_frame, which has the same format as the output oof DataCleaner
-        :type input_data_frame: data_frame
-        :param input_date: date of interesting
+        :param input_data_frame: input series, which has the same format as the output oof DataCleaner
+        :type input_data_frame: pandas series
+        :param input_date: date of interest
         :type input_date: np.datetime64,['D']
         """
         self.input_data_frame = input_data_frame
@@ -77,13 +77,13 @@ class FourGramModel:
 #  Only executed when this file is called directly, this part of code is for debug purpose only
 if __name__ == '__main__':
     translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
-    pickle_in = open("../../data/intermediate/dict_with_new_cleaner_multiple_process.pickle", "rb")
-    processed_news_dataframe = pickle.load(pickle_in)
-    model_1 = FourGramModel(processed_news_dataframe, np.datetime64('2018-06-08'))
+    pickle_in = open("../../data/intermediate/series_with_new_cleaner_multiple_process.pickle", "rb")
+    processed_news_series = pickle.load(pickle_in)
+    model_1 = FourGramModel(processed_news_series, np.datetime64('2018-06-08'))
     model_1()
-    # pickle_out = open("../data/intermediate/model.pickle", "wb")
-    # pickle.dump(model_1.lm, pickle_out)
-    # pickle_out.close()
+    pickle_out = open("../../data/intermediate/model.pickle", "wb")
+    pickle.dump(model_1.lm, pickle_out)
+    pickle_out.close()
     # a = sorted(model_1.lm.counts[3].items())
     # print(a[::-400])
     # text = []
