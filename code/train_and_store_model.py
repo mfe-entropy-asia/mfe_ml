@@ -35,7 +35,7 @@ def multiple_processing_func(input_date):
 
 
 if __name__ == '__main__':
-    p = Pool(8)
+    p = Pool(2)
     start = time.time()
     p.map_async(multiple_processing_func, [key for key in processed_news_dict])
     p.close()
