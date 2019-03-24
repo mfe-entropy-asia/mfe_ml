@@ -70,7 +70,7 @@ class DataCleaner:
             # print("Time %s is not in dictionary" % m_time)
             # self.m_dict[m_time] = []
             self.m_data_series.at[m_time] = []
-        # self.m_dict[m_time].append(self.data_clean(m_body))
+        # self.m_dict[m_time].append(self.1_data_clean(m_body))
         self.m_data_series.at[m_time].append(self.data_clean(m_body))
 
     def data_clean(self, string: str):
@@ -213,8 +213,8 @@ if __name__ == '__main__':
     start = time.time()
     print("Cleaning data, starting time: %s ..." % start)
     output_file = open("../out.dat", "w", encoding="utf-8")
-    input_file_list = ["../data/raw/News.RTRS.201806.0214.txt", "../data/raw/News.RTRS.201807.0214.txt",
-                       "../data/raw/News.RTRS.201808.0214.txt"]
+    input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt", "../../data/raw/News.RTRS.201807.0214.txt",
+                       "../../data/raw/News.RTRS.201808.0214.txt"]
     unique_altid_dict = {}
     for file in input_file_list:
         with open(file, encoding="utf-8") as f:
@@ -242,7 +242,7 @@ if __name__ == '__main__':
     end = time.time()
     print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
     # print(Dat_clean.m_data_series.at[np.datetime64('2018-06-08')][1])
-    pickle_out = open("../data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
+    pickle_out = open("../../data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
     pickle.dump(Dat_clean.m_data_series, pickle_out)
     pickle_out.close()
 

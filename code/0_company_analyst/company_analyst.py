@@ -3,8 +3,8 @@ import os
 
 class CompanyAnalyst:
     def __init__(self):
-        self.filtered_path = "./data/intermediate/0_filtered.dat"
-        self.results_path = "./data/analysis/"
+        self.filtered_path = "../../data/intermediate/0_filtered.dat"
+        self.results_path = "../../data/analysis/"
         if not os.path.exists(self.results_path):
             os.makedirs(self.results_path)
         self.candidates = [line.strip() for line in open("./config/candidates.txt", 'r')]

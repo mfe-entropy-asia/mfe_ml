@@ -17,16 +17,16 @@ from nltk.util import ngrams
 
 
 class FourGramModel:
-    def __init__(self, input_dict, input_date):
+    def __init__(self, input_data_frame, input_date):
         """
-        To instantiate the 4-gram model, we need to provide the dictionary of data , and the date of interest
+        To instantiate the 4-gram model, we need to provide the dataframe , and the date of interest
 
-        :param input_dict: input dictionary, which has the same format as the output oof DataCleaner
-        :type input_dict: Dictionary
+        :param input_data_frame: input data_frame, which has the same format as the output oof DataCleaner
+        :type input_data_frame: data_frame
         :param input_date: date of interesting
         :type input_date: np.datetime64,['D']
         """
-        self.input_dict = input_dict
+        self.input_data_frame = input_data_frame
         self.input_date = input_date
         self.train = []
         self.vocab = []
@@ -54,7 +54,7 @@ class FourGramModel:
         """
         training_text = []
         for idx in range(7):
-            for content in self.input_dict[self.input_date - idx - 1]:
+            for content in self.input_data_frame[self.input_date - idx - 1]:
                 training_text += [word_tokenize(sentence.translate(self.translator))
                                   for sentence in sent_tokenize(content)]
         # self.train, self.vocab = padded_everygram_pipeline(4, training_text)
@@ -77,13 +77,13 @@ class FourGramModel:
 #  Only executed when this file is called directly, this part of code is for debug purpose only
 if __name__ == '__main__':
     translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
-    pickle_in = open("../data/intermediate/dict.pickle", "rb")
-    processed_news_dict = pickle.load(pickle_in)
-    model_1 = FourGramModel(processed_news_dict, np.datetime64('2018-06-08'))
+    pickle_in = open("../../data/intermediate/dict_with_new_cleaner_multiple_process.pickle", "rb")
+    processed_news_dataframe = pickle.load(pickle_in)
+    model_1 = FourGramModel(processed_news_dataframe, np.datetime64('2018-06-08'))
     model_1()
-    pickle_out = open("../data/intermediate/model.pickle", "wb")
-    pickle.dump(model_1.lm, pickle_out)
-    pickle_out.close()
+    # pickle_out = open("../data/intermediate/model.pickle", "wb")
+    # pickle.dump(model_1.lm, pickle_out)
+    # pickle_out.close()
     # a = sorted(model_1.lm.counts[3].items())
     # print(a[::-400])
     # text = []
