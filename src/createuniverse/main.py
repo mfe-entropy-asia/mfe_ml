@@ -13,6 +13,7 @@ this main function generates two files:
 1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc. 
 """
 
+
 def clean_a_file_and_return_data(input_file, data_processor, article_dict):
     # result = []
     with open(input_file, encoding="utf-8") as f:
@@ -27,12 +28,13 @@ def clean_a_file_and_return_data(input_file, data_processor, article_dict):
 def filter_handler(file_list, data_processor, article_dict):
     p = mp.Pool(4)
     result = pd.Series()
-    for return_data_series in p.imap(partial(clean_a_file_and_return_data, data_processor=data_processor, article_dict=article_dict), file_list):
+    for return_data_series in p.imap(
+            partial(clean_a_file_and_return_data, data_processor=data_processor, article_dict=article_dict), file_list):
         result = result.append(return_data_series)
     return result
 
 
-def main():
+if __name__ == '__main__':
     manager = mp.Manager()
     shared_article_dict = manager.dict()
     filter = DataFilter()
@@ -74,5 +76,4 @@ def main():
     #     if key == np.datetime64('2018-06-08'):
     #         print(my_dict[key][0])
 
-
-main()
+# main()

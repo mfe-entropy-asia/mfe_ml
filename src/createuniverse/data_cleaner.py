@@ -25,7 +25,7 @@ class DataCleaner:
         self.unique_alt_id = set()
 
     def __call__(self):
-        print("%s entries", len(self.filtered.index))
+        print("%s entries" % len(self.filtered.index))
         for each_time in self.filtered:
             for data_line in each_time:
                 self.clean_up(data_line)
@@ -50,11 +50,11 @@ class DataCleaner:
         target = self.remove_brackets(target)
         target = self.remove_header(target)
         target = self.remove_keywords(target)
-        target = target.replace('\\n', ' ')\
-            .replace('\\\"', '')\
-            .replace('\\r', ' ')\
-            .replace('*', '')\
-            .replace('“', '')\
+        target = target.replace('\\n', ' ') \
+            .replace('\\\"', '') \
+            .replace('\\r', ' ') \
+            .replace('*', '') \
+            .replace('“', '') \
             .replace('”', '')
         return target.lower()
 

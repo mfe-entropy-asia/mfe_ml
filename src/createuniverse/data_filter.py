@@ -4,6 +4,7 @@ import pandas as pd
 import time
 import pickle
 
+
 class DataFilter:
     def __init__(self):
         self.m_dict = {}
