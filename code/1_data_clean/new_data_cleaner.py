@@ -11,10 +11,6 @@ class DataCleaner:
     def __init__(self):
         self.m_dict = {}
         self.m_data_series = pd.Series()
-        # self.input_file_lst = input_file_lst
-        # self.output_path = output_path
-        # self.output_file = output_path + "en_output.dat"
-        # self.intermediate_filtered = output_path + "0_filtered.dat"
         # To filter language
         self.find_en = re.compile('"language": "en"')
 
@@ -42,13 +38,7 @@ class DataCleaner:
 
         self.find_header = re.compile(r'^.* - ')
 
-        self.invalid_headline = re.compile(r'headline": "TABLE-" '
-                                           r'| "headline": "*TOP NEWS*" '
-                                           r'| "headline": "DIARY-" '
-                                           r'| "headline": "SHH .* Margin Trading" '
-                                           r'| "headline": "North American power transmission outage update - PJM" '
-                                           r'| "headline": "UPDATE 1"')
-        self.unique_alt_id = set()
+        # self.unique_alt_id = set()
 
     def __call__(self, data, article_dict):
         if self.valid_english_story(article_dict, data):
@@ -77,24 +67,36 @@ class DataCleaner:
         """
         Function which will do the data clean
         Remove the parentheses
+
         :param string: the input string data
         :return: string after data clean
         """
         string = self.remove_brackets(string)
         string = self.remove_header(string)
-        string = string.replace('\\n', ' ')\
-            .replace('\\\"', '')\
-            .replace('\\r', ' ')\
-            .replace('*', '')\
-            .replace('“', '')\
+        string = string.replace('\\n', ' ') \
+            .replace('\\\"', '') \
+            .replace('\\r', ' ') \
+            .replace('*', '') \
+            .replace('“', '') \
             .replace('”', '')
         return string.lower()
 
     def valid_english_story(self, article_dict, data):
-        return self.if_body_not_empty(data) and self.if_en(data) and self.target_headline(data) \
-               and self.new_story(article_dict, data)
-        
+        """
+
+        :param article_dict: The dictionary which contains the unique article Ids
+        :param data: A whole line of the raw data
+        :return: Boolean to show whether the story is valid
+        """
+        return self.if_body_not_empty(data) and self.if_en(data) \
+               and self.target_headline(data) and self.new_story(article_dict, data)
+
     def if_en(self, data):
+        """
+
+        :param data:
+        :return: True if language is English
+        """
         if self.find_en.search(data):
             return True
         else:
@@ -108,11 +110,13 @@ class DataCleaner:
         else:
             return False
 
-    # def target_headline(self, data):
-    #     return not self.invalid_headline.search(data)
-
     @staticmethod
     def target_headline(data):
+        """
+
+        :param data: One line of the row data
+        :return: Boolean to show whether headline is valid
+        """
         invalid_headline = ['"headline": "TABLE-', '"headline": "*TOP NEWS*', '"headline": "DIARY-',
                             '"headline": "SHH Daily Margin Trading', '"headline": "SHH Margin Trading',
                             '"headline": "North American power transmission outage update - PJM',
@@ -123,6 +127,12 @@ class DataCleaner:
             return True
 
     def new_story(self, article_dict, data):
+        """
+
+        :param article_dict: Dictionary which contains all the present article IDs
+        :param data: One line of the raw data
+        :return: Boolean to show whether the article ID has appeared only once
+        """
         m_new_story = self.find_altId.search(data)
         alt_id = m_new_story.group(1)
         if alt_id in article_dict:
@@ -131,7 +141,7 @@ class DataCleaner:
         else:
             article_dict[alt_id] = 1
             return True
-            
+
     @staticmethod
     def remove_nested_parentheses(data: str):
         """
@@ -230,7 +240,7 @@ if __name__ == '__main__':
             next(f)
             for line in f:
                 Dat_clean(line, unique_altid_dict)
-                
+
     for i in Dat_clean.m_data_series:
         # print(len(i))
         for body in i:
@@ -242,5 +252,3 @@ if __name__ == '__main__':
     pickle_out = open("../../data/intermediate/series_with_new_cleaner_single_process.pickle", "wb")
     pickle.dump(Dat_clean.m_data_series, pickle_out)
     pickle_out.close()
-
-

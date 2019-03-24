@@ -49,7 +49,6 @@ if __name__ == '__main__':
             print(len(i))
             for body in i:
                 f_out.write(body + '\n')
-
     # print(my_dict.at[np.datetime64('2018-06-08')][1])
     pickle_out = open("../../data/intermediate/series_with_new_cleaner_multiple_process.pickle", "wb")
     pickle.dump(my_dict, pickle_out)
