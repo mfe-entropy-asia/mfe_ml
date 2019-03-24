@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import os
 import numpy as np
 import pandas as pd
 import time
@@ -8,40 +7,15 @@ import pickle
 
 
 class DataCleaner:
-    def __init__(self):
-        self.m_dict = {}
+    def __init__(self, filtered):
+        self.filtered = filtered
         self.m_data_series = pd.Series()
-        # self.input_file_lst = input_file_lst
-        # self.output_path = output_path
-        # self.output_file = output_path + "en_output.dat"
-        # self.intermediate_filtered = output_path + "0_filtered.dat"
-        # To filter language
-        self.find_en = re.compile('"language": "en"')
-
-        # To find uniq article ID
-        self.find_altId = re.compile('"altId": "(.*?)",')
-
-        # To match the headline content
-        self.find_headline = re.compile('"headline": "(.*?)", "takeSequence"')
-
-        # To match the body content
         self.find_body = re.compile('"body": "(.*?)", "mimeType"')
-
-        # To extract data section
-        self.find_data = re.compile("\"data\": {(.*?)}}")
-
-        # Time
         self.find_time = re.compile('"versionCreated": "(.*?)"')
-        # The Reuters footnote(e.g. ((Diaries@thomsonreuters.com))) needs to be removed
-        # self.find_double_parentheses = re.compile(r'\(\(.*?\)\)')   # The Reuters footnote needs to be removed
-
-        # self.find_parentheses = re.compile(r'\(.*?\)')  # Wrong !!!! Not applicable for nested parentheses 
+        self.find_keywords = re.compile(r'keywords:.*$', re.IGNORECASE)
         self.find_bracket = re.compile(r'\[.*?\]')
-
         self.find_angle_quotation = re.compile(r'<.*?>')
-
         self.find_header = re.compile(r'^.* - ')
-
         self.invalid_headline = re.compile(r'headline": "TABLE-" '
                                            r'| "headline": "*TOP NEWS*" '
                                            r'| "headline": "DIARY-" '
@@ -50,66 +24,39 @@ class DataCleaner:
                                            r'| "headline": "UPDATE 1"')
         self.unique_alt_id = set()
 
-    def __call__(self, data, article_dict):
-        if self.valid_english_story(article_dict, data):
-            # print("This line is valid!")
-            self.gen_dict(data)
-            return True
-        else:
-            return False
-            # print("This line is not valid!!!!")
+    def __call__(self):
+        print("%s entries", len(self.filtered.index))
+        for each_time in self.filtered:
+            for data_line in each_time:
+                self.clean_up(data_line)
 
-    def gen_dict(self, data):
-        m_body = self.find_body.search(data)
+    def clean_up(self, data_line):
+        m_body = self.find_body.search(data_line)
         m_body = m_body.group(1)
-        m_time = self.find_time.search(data)
+        m_time = self.find_time.search(data_line)
         m_time = m_time.group(1)
         m_time = np.datetime64(m_time[:10])
-        # print("Time is %s" % m_time)
         if m_time not in self.m_data_series.index:
-            # print("Time %s is not in dictionary" % m_time)
-            # self.m_dict[m_time] = []
             self.m_data_series.at[m_time] = []
-        # self.m_dict[m_time].append(self.1_data_clean(m_body))
         self.m_data_series.at[m_time].append(self.data_clean(m_body))
 
-    def data_clean(self, string: str):
+    def data_clean(self, target: str):
         """
         Function which will do the data clean
         Remove the parentheses
-        :param string: the input string data
+        :param target: the input string data
         :return: string after data clean
         """
-        string = self.remove_brackets(string)
-        string = self.remove_header(string)
-        string = string.replace('\\n', ' ')\
+        target = self.remove_brackets(target)
+        target = self.remove_header(target)
+        target = self.remove_keywords(target)
+        target = target.replace('\\n', ' ')\
             .replace('\\\"', '')\
             .replace('\\r', ' ')\
             .replace('*', '')\
             .replace('“', '')\
             .replace('”', '')
-        return string.lower()
-
-    def valid_english_story(self, article_dict, data):
-        return self.if_body_not_empty(data) and self.if_en(data) and self.target_headline(data) \
-               and self.new_story(article_dict, data)
-        
-    def if_en(self, data):
-        if self.find_en.search(data):
-            return True
-        else:
-            return False
-
-    def if_body_not_empty(self, data):
-        m_body = self.find_body.search(data)
-        m_body = m_body.group(1)
-        if m_body != '':
-            return True
-        else:
-            return False
-
-    # def target_headline(self, data):
-    #     return not self.invalid_headline.search(data)
+        return target.lower()
 
     @staticmethod
     def target_headline(data):
@@ -122,20 +69,9 @@ class DataCleaner:
         else:
             return True
 
-    def new_story(self, article_dict, data):
-        m_new_story = self.find_altId.search(data)
-        alt_id = m_new_story.group(1)
-        if alt_id in article_dict:
-            # print (alt_id + "\n")
-            return False
-        else:
-            article_dict[alt_id] = 1
-            return True
-            
     @staticmethod
     def remove_nested_parentheses(data: str):
         """
-
         :param data: input string
         :return: data with all parentheses removed
         """
@@ -153,7 +89,6 @@ class DataCleaner:
     @staticmethod
     def remove_nested_brackets(data: str):
         """
-
         :param data: input string
         :return: data with all parentheses removed
         """
@@ -171,7 +106,6 @@ class DataCleaner:
     @staticmethod
     def remove_nested_square_brackets(data: str):
         """
-
         :param data: input string
         :return: data with all parentheses removed
         """
@@ -186,15 +120,15 @@ class DataCleaner:
                 result += letter
         return result
 
+    def remove_keywords(self, data):
+        return self.find_keywords.sub(r'', data)
+
     def remove_brackets(self, data):
         """
-
         Remove ((.*)) and [.*] and <.*> and nested parentheses
-
         :param data:  Input string data
         :return: String data after processing.
         """
-
         data = self.find_bracket.sub(r'', data)
         data = self.find_angle_quotation.sub(r'', data)
         data = self.remove_nested_parentheses(data)
@@ -205,49 +139,3 @@ class DataCleaner:
     def remove_header(self, data):
         data = self.find_header.sub(r'', data)
         return data
-
-
-if __name__ == '__main__':
-    print("data_cleaner.py called directly.")
-    cleaner = DataCleaner()
-    start = time.time()
-    print("Cleaning data, starting time: %s ..." % start)
-
-    input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt",
-                       "../../data/raw/News.RTRS.201807.0214.txt",
-                       "../../data/raw/News.RTRS.201808.0214.txt"]
-    output_file = open("../../data/intermediate/cleaned_out.dat", "w", encoding="utf-8")
-
-    unique_altid_dict = {}
-    for file in input_file_list:
-        with open(file, encoding="utf-8") as f:
-            line_nu = 0
-            for line in f:
-                if line_nu != 0:
-                    if cleaner(line, unique_altid_dict):
-                        m_data = cleaner.find_data.search(line)
-                        write_line = m_data.group(1)
-                        output_file.write(write_line + "\n")
-                line_nu += 1
-
-    # for file in input_file_list:
-    #     with open(file, encoding="utf-8") as f:
-    #         line_nu = 0
-    #         for line in f:
-    #             if line_nu != 0:
-    #                 Dat_clean(line, unique_altid_dict)
-    #             line_nu += 1
-    # for i in Dat_clean.m_data_series:
-    #     # print(len(i))
-    #     for body in i:
-    #         output_file.write(body + '\n')
-    output_file.close()
-    end = time.time()
-    print("Cleaning finished. Total time: %s seconds" % (end - start))
-
-    # print(Dat_clean.m_data_series.at[np.datetime64('2018-06-08')][1])
-    pickle_out = open("../../data/intermediate/cleaned_series_single_process.pickle", "wb")
-    pickle.dump(cleaner.m_data_series, pickle_out)
-    pickle_out.close()
-
-
