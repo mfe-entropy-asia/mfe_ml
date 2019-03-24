@@ -6,7 +6,7 @@ import os
 import time
 from multiprocessing import Pool
 
-dict_pickle_path = "../../data/intermediate/dict_with_new_cleaner_multiple_process.pickle"
+dict_pickle_path = "../../data/intermediate/cleaned_series_multiple_process.pickle"
 
 # if not os.path.isfile(dict_pickle_path):
 #         dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt",

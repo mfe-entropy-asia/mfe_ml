@@ -208,21 +208,24 @@ class DataCleaner:
 
 
 if __name__ == '__main__':
-    print("data_cleaner.py called directly!!!")
-    Dat_clean = DataCleaner()
+    print("data_cleaner.py called directly.")
+    cleaner = DataCleaner()
     start = time.time()
     print("Cleaning data, starting time: %s ..." % start)
-    output_file = open("../out.dat", "w", encoding="utf-8")
-    input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt", "../../data/raw/News.RTRS.201807.0214.txt",
+
+    input_file_list = ["../../data/raw/News.RTRS.201806.0214.txt",
+                       "../../data/raw/News.RTRS.201807.0214.txt",
                        "../../data/raw/News.RTRS.201808.0214.txt"]
+    output_file = open("../../data/intermediate/cleaned_out.dat", "w", encoding="utf-8")
+
     unique_altid_dict = {}
     for file in input_file_list:
         with open(file, encoding="utf-8") as f:
             line_nu = 0
             for line in f:
                 if line_nu != 0:
-                    if Dat_clean(line, unique_altid_dict):
-                        m_data = Dat_clean.find_data.search(line)
+                    if cleaner(line, unique_altid_dict):
+                        m_data = cleaner.find_data.search(line)
                         write_line = m_data.group(1)
                         output_file.write(write_line + "\n")
                 line_nu += 1
@@ -240,10 +243,11 @@ if __name__ == '__main__':
     #         output_file.write(body + '\n')
     output_file.close()
     end = time.time()
-    print("Cleaning finished!!!  Total time: %s seconds" % (end - start))
+    print("Cleaning finished. Total time: %s seconds" % (end - start))
+
     # print(Dat_clean.m_data_series.at[np.datetime64('2018-06-08')][1])
-    pickle_out = open("../../data/intermediate/dict_with_new_cleaner_single_process.pickle", "wb")
-    pickle.dump(Dat_clean.m_data_series, pickle_out)
+    pickle_out = open("../../data/intermediate/cleaned_series_single_process.pickle", "wb")
+    pickle.dump(cleaner.m_data_series, pickle_out)
     pickle_out.close()
 
 

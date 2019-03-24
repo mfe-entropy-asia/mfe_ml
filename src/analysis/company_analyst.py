@@ -7,7 +7,7 @@ class CompanyAnalyst:
         self.results_path = "../../data/analysis/"
         if not os.path.exists(self.results_path):
             os.makedirs(self.results_path)
-        self.candidates = [line.strip() for line in open("./config/candidates.txt", 'r')]
+        self.candidates = [line.strip() for line in open("../../config/candidates.txt", 'r')]
         self.filtered_news = {}
 
     def __call__(self):

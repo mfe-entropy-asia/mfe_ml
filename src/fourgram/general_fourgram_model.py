@@ -76,7 +76,7 @@ def gen_7day_corpus(input_dict, day):
 
 if __name__ == '__main__':
     model1 = MLE(4)
-    pickle_in = open("../../data/intermediate/dict_with_new_cleaner_multiple_process.pickle", "rb")
+    pickle_in = open("../../data/intermediate/cleaned_series_multiple_process.pickle", "rb")
     processed_news_data_frame = pickle.load(pickle_in)
     print(type(processed_news_data_frame))
     pickle_in.close()
