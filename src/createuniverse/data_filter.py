@@ -46,7 +46,8 @@ class DataFilter:
         self.m_data_series.at[m_time].append(data_line)
 
     def valid_english_story(self, article_dict, data):
-        return self.if_body_not_empty(data) \
+        return not self.body_looks_like_a_table(data) \
+               and self.if_body_not_empty(data) \
                and self.if_en(data) \
                and self.target_headline(data) \
                and self.new_story(article_dict, data)
@@ -56,6 +57,11 @@ class DataFilter:
             return True
         else:
             return False
+
+    def body_looks_like_a_table(self, data):
+        m_body = self.find_body.search(data)
+        m_body = m_body.group(1)
+        return '---------' in m_body or '_____________' in m_body or '---     ---' in m_body
 
     def if_body_not_empty(self, data):
         m_body = self.find_body.search(data)
