@@ -42,7 +42,7 @@ if __name__ == '__main__':
                        "../../data/raw/News.RTRS.201808.0214.txt"]
     print("\nFiltering data ...")
     start = time.time()
-    filtered_series = filter_handler(["../../data/raw/News.RTRS.201806.0214.txt"], filter, shared_article_dict)
+    filtered_series = filter_handler([input_file_list[0]], filter, shared_article_dict)
     end = time.time()
     print("Finished in: %s seconds" % (end - start))
 
