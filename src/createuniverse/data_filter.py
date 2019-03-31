@@ -73,10 +73,23 @@ class DataFilter:
 
     @staticmethod
     def target_headline(data):
-        invalid_headline = ['"headline": "TABLE-', '"headline": "*TOP NEWS*', '"headline": "DIARY-',
-                            '"headline": "SHH Daily Margin Trading', '"headline": "SHH Margin Trading',
+        invalid_headline = ['"headline": "TABLE-',
+                            '"headline": "*TOP NEWS*',
+                            '"headline": "DIARY-',
+                            '"headline": "SHH Daily Margin Trading',
+                            '"headline": "SHH Margin Trading',
                             '"headline": "North American power transmission outage update - PJM',
-                            '"headline": "UPDATE 1', '"headline": " BOJ:', '"headline": "CRBIndex']
+                            '"headline": "UPDATE 1',
+                            '"headline": " BOJ:',
+                            '"headline": "CRBIndex',
+                            '"headline": "Asia Pacific Daily Earnings Hits & Misses',
+                            '"headline": "CBOT agriculture futures est vol/open int -',
+                            '"headline": "Rajkot Foodgrain Prices',
+                            '"headline": "Rajkot Oilseeds Complex',
+                            '"headline": "Rajkot Castor seeds',
+                            '"headline": "Europe Daily Earnings Hits & Misses',
+                            '"headline": "Power plant unit status -',
+                            '"headline": "CBOT preliminary vol/open int totals for May 31"']
         if any(x in data for x in invalid_headline):
             return False
         else:
