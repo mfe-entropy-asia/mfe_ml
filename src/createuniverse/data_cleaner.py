@@ -86,20 +86,6 @@ class DataCleaner:
         return target.lower().strip()
 
     @staticmethod
-    def target_headline(data):
-        invalid_headline = ['"headline": "TABLE-', '"headline": "*TOP NEWS*', '"headline": "DIARY-',
-                            '"headline": "SHH Daily Margin Trading', '"headline": "SHH Margin Trading',
-                            '"headline": "North American power transmission outage update - PJM',
-                            '"headline": "UPDATE 1', '"headline": " BOJ:', '"headline": "CRBIndex',
-                            '"headline": "Asia Pacific Daily Earnings Hits & Misses May 32"',
-                            '"headline": "CBOT agriculture futures est vol/open int - May 31"',
-                            '"headline": "CBOT preliminary vol/open int totals for May 31"']
-        if any(x in data for x in invalid_headline):
-            return False
-        else:
-            return True
-
-    @staticmethod
     def remove_nested_parentheses(data: str):
         """
         :param data: input string
