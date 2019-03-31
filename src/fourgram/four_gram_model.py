@@ -64,26 +64,28 @@ class FourGramModel:
         four_gram = []
         for sent in list(every_gram):
             for item in sent:
-                if len(item) == 3:
-                    three_gram.append(item)
-                elif len(item) == 4:
+                # if len(item) == 3:
+                #     three_gram.append(item)
+                # elif len(item) == 4:
+                #     four_gram.append(item)
+                if len(item) == 4:
                     four_gram.append(item)
         # three_gram = [item for sent in list(every_gram) for item in sent if len(item) == 3]
         # four_gram = [item for sent in list(every_gram) for item in sent if len(item) == 4]
-        train = [three_gram, four_gram]
+        train = [four_gram]
         self.lm.fit(train, vocab)
 
 
 #  Only executed when this file is called directly, this part of code is for debug purpose only
 if __name__ == '__main__':
     translator = str.maketrans('', '', string.punctuation)  # To get rid of the punctuations
-    pickle_in = open("../../data/intermediate/cleaned_series_multiple_process.pickle", "rb")
+    pickle_in = open("../../data/intermediate/1_cleaned.pickle", "rb")
     processed_news_dataframe = pickle.load(pickle_in)
     model_1 = FourGramModel(processed_news_dataframe, np.datetime64('2018-06-08'))
     model_1()
-    # pickle_out = open("../data/intermediate/model.pickle", "wb")
-    # pickle.dump(model_1.lm, pickle_out)
-    # pickle_out.close()
+    pickle_out = open("../../data/intermediate/model.pickle", "wb")
+    pickle.dump(model_1.lm, pickle_out)
+    pickle_out.close()
     # a = sorted(model_1.lm.counts[3].items())
     # print(a[::-400])
     # text = []

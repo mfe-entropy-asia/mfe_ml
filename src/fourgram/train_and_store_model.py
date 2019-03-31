@@ -6,7 +6,7 @@ import os
 import time
 from multiprocessing import Pool
 
-dict_pickle_path = "../../data/intermediate/cleaned_series_multiple_process.pickle"
+dict_pickle_path = "../../data/intermediate/1_cleaned.pickle"
 
 # if not os.path.isfile(dict_pickle_path):
 #         dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt",
@@ -35,7 +35,7 @@ def multiple_processing_func(input_date):
 
 
 if __name__ == '__main__':
-    p = Pool(2)
+    p = Pool(3)
     start = time.time()
     p.map_async(multiple_processing_func,
                 [np.datetime64(key).astype('datetime64[D]') for key in processed_news_dict.index])
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     print("All models fitted, total Time:" + str(end - start))
 
     print("Dumping Pickle file.........\n")
-    pickle_out = open("../../data/intermediate/model.pickle", "wb")
+    pickle_out = open("../../data/intermediate/model_dict.pickle", "wb")
     pickle.dump(fitted_models, pickle_out)
     pickle_out.close()
     print("Finish dumping\n")
