@@ -20,6 +20,14 @@ class DataCleaner:
         self.find_bracket = re.compile(r'\[.*?\]')
         self.find_angle_quotation = re.compile(r'<.*?>')
         self.find_header = re.compile(r'^.* - ')
+        self.find_fitch = re.compile(r"(See Fitch's recent commentary.*$)", re.IGNORECASE)
+        self.find_fitch2 = re.compile(r"(contact: .*$)", re.IGNORECASE)
+        self.find_fitch3 = re.compile(r"(https://www.fitchratings.com/site.*$)", re.IGNORECASE)
+        self.find_fitch4 = re.compile(r"(media relations: .*$)", re.IGNORECASE)
+        self.find_note = re.compile(r"(note: .*$)", re.IGNORECASE)
+        self.find_price_table = re.compile(r"(Reuters Terminal users can see .*$)", re.IGNORECASE)
+        self.find_price_table2 = re.compile(r"(palm, soy and crude oil prices at \d+ gmt.*$)", re.IGNORECASE)
+        self.find_change = re.compile(r"(\..*?change on the day.*$)", re.IGNORECASE)
         self.invalid_headline = re.compile(r'headline": "TABLE-" '
                                            r'| "headline": "*TOP NEWS*" '
                                            r'| "headline": "DIARY-" '
@@ -55,12 +63,20 @@ class DataCleaner:
         """
 
         target = self.remove_header(target)
+        target = self.remove_price_table(target)
         target = self.remove_keywords(target)
         target = self.remove_source_link(target)
         target = self.remove_source_text_for_eikon(target)
         target = self.remove_source_text_in(target)
         target = self.remove_source_text(target)
         target = self.remove_brackets(target)
+        target = self.remove_fitch(target)
+        target = self.remove_fitch2(target)
+        target = self.remove_fitch3(target)
+        target = self.remove_fitch4(target)
+        target = self.remove_note(target)
+        target = self.remove_price_table2(target)
+        target = self.remove_change(target)
         target = target.replace('\\n', ' ') \
             .replace('\\\"', '') \
             .replace('\\r', ' ') \
@@ -74,7 +90,10 @@ class DataCleaner:
         invalid_headline = ['"headline": "TABLE-', '"headline": "*TOP NEWS*', '"headline": "DIARY-',
                             '"headline": "SHH Daily Margin Trading', '"headline": "SHH Margin Trading',
                             '"headline": "North American power transmission outage update - PJM',
-                            '"headline": "UPDATE 1', '"headline": " BOJ:', '"headline": "CRBIndex']
+                            '"headline": "UPDATE 1', '"headline": " BOJ:', '"headline": "CRBIndex',
+                            '"headline": "Asia Pacific Daily Earnings Hits & Misses May 32"',
+                            '"headline": "CBOT agriculture futures est vol/open int - May 31"',
+                            '"headline": "CBOT preliminary vol/open int totals for May 31"']
         if any(x in data for x in invalid_headline):
             return False
         else:
@@ -136,6 +155,30 @@ class DataCleaner:
 
     def remove_source_link(self, data):
         return self.find_source_link.sub(r'', data)
+
+    def remove_fitch(self, data):
+        return self.find_fitch.sub(r'', data)
+
+    def remove_fitch2(self, data):
+        return self.find_fitch2.sub(r'', data)
+
+    def remove_fitch3(self, data):
+        return self.find_fitch3.sub(r'', data)
+
+    def remove_fitch4(self, data):
+        return self.find_fitch4.sub(r'', data)
+
+    def remove_note(self, data):
+        return self.find_note.sub(r'', data)
+
+    def remove_price_table(self, data):
+        return self.find_price_table.sub(r'', data)
+
+    def remove_price_table2(self, data):
+        return self.find_price_table2.sub(r'', data)
+
+    def remove_change(self, data):
+        return self.find_change.sub(r'', data)
 
     def remove_source_text_for_eikon(self, data):
         return self.find_source_text_for_eikon.sub(r'', data)
