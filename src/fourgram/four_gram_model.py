@@ -86,35 +86,3 @@ if __name__ == '__main__':
     pickle_out = open("../../data/intermediate/model.pickle", "wb")
     pickle.dump(model_1.lm, pickle_out)
     pickle_out.close()
-    # a = sorted(model_1.lm.counts[3].items())
-    # print(a[::-400])
-    # text = []
-    # for i in range(40):
-    #     for body in processed_news_dict[np.datetime64('2018-06-01')+i]:
-    #         # if body != '':
-    #         text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
-
-    # date = np.datetime64('2018-06-01') + 4
-    # present_day_text = []
-    # for body in processed_news_dict[date]:
-    #     present_day_text += [word_tokenize(sentence.translate(translator)) for sentence in sent_tokenize(body)]
-    # text_fourgram = [ngrams(sent, 4) for sent in present_day_text]
-    # for i in text_fourgram:
-    #     print(list(i))
-    # every_gram, vocab = padded_everygram_pipeline(4, present_day_text)  # This will generate unigram, bigram,
-    # # trigram and fourgram
-    # three_gram = [item for sent in list(every_gram) for item in sent if len(item) == 3]
-    # four_gram = [item for sent in list(every_gram) for item in sent if len(item) == 4]
-    # train = [three_gram, four_gram]
-    # for i in train:
-    #     print(i)
-        # for item in list(i):
-        #     print(item)
-    # lm = MLE(4)
-    # lm.fit(train, vocab)
-    # a = sorted(lm.counts[4].items())
-    # for i in lm.counts[4]:  # print all the 3 grams
-    #     print(i)
-    # print(lm.score('almost', ['yields', 'have', 'fallen']))
-    # print(len(lm.vocab))
-    # print(lm.counts)

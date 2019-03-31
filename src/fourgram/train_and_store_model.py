@@ -1,54 +1,63 @@
-from four_gram_model import FourGramModel
+from src.fourgram.four_gram_model import FourGramModel
 # from data_cleaner import DataCleaner
 import pickle
 import numpy as np
+import pandas as pd
 import os
 import time
-from multiprocessing import Pool
-
-dict_pickle_path = "../../data/intermediate/1_cleaned.pickle"
-
-# if not os.path.isfile(dict_pickle_path):
-#         dat_clean = DataCleaner("en", ["../data/raw/News.RTRS.201806.0214.txt",
-#                                        "../data/raw/News.RTRS.201807.0214.txt",
-#                                        "../data/raw/News.RTRS.201808.0214.txt"], "../data/intermediate/")
-#         dat_clean()
-
-pickle_in = open(dict_pickle_path, "rb")
-processed_news_dict = pickle.load(pickle_in)
-
-fitted_models = {}
+# from multiprocessing import Pool
+# from multiprocessing import Manager
+import multiprocessing as mp
+from functools import partial
 
 
-def multiple_processing_func(input_date):
-    global fitted_models
-    global processed_news_dict
+def multiple_processing_func(input_data_series, input_date):
+    # global fitted_models
+    # global processed_news_dict
     if input_date < np.datetime64('2018-06-08'):
         return
     else:
-        model = FourGramModel(processed_news_dict, input_date)
+        model = FourGramModel(input_data_series, input_date)
         try:
             model()
-            fitted_models[input_date] = model.lm
         except Exception as e:
             print("Training failed;" + e)
+    print("Dumping Pickle file.........\n")
+    pik_name = str(input_date)
+    pickle_path = '../../data/intermediate/3_models/model_' + pik_name + '.pickle'
+    pickle_out = open(pickle_path, "wb")
+    pickle.dump({input_date: model.lm}, pickle_out)
+    pickle_out.close()
+    print("Finish dumping\n")
+
+
+def multi_train_handler(data_series):
+    p = mp.Pool()
+    date_list = [np.datetime64(key).astype('datetime64[D]') for key in data_series.index]
+    train_model = partial(multiple_processing_func, data_series)
+    p.map_async(train_model, date_list)
+    p.close()
+    p.join()
 
 
 if __name__ == '__main__':
-    p = Pool(3)
+    dict_pickle_path = "../../data/intermediate/1_cleaned.pickle"
+    pickle_in = open(dict_pickle_path, "rb")
+    processed_news_series = pickle.load(pickle_in)
+    pickle_in.close()
     start = time.time()
-    p.map_async(multiple_processing_func,
-                [np.datetime64(key).astype('datetime64[D]') for key in processed_news_dict.index])
-    p.close()
-    p.join()
+    # for date in date_list:
+    #     fitted_model = multiple_processing_func(processed_news_series, date)
+    #     pik_name = str(date)
+    #     pickle_path = '../../data/intermediate/model_' + pik_name + '.pickle'
+    #     pickle_out = open(pickle_path, "wb")
+    #     pickle.dump(fitted_model, pickle_out)
+    #     pickle_out.close()
+    multi_train_handler(processed_news_series)
     end = time.time()
+    # fitted_models = dict(fitted_models)
     print("All models fitted, total Time:" + str(end - start))
 
-    print("Dumping Pickle file.........\n")
-    pickle_out = open("../../data/intermediate/model_dict.pickle", "wb")
-    pickle.dump(fitted_models, pickle_out)
-    pickle_out.close()
-    print("Finish dumping\n")
 
 
 
