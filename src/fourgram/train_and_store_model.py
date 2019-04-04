@@ -26,7 +26,7 @@ def multiple_processing_func(input_data_series, input_date):
     pik_name = str(input_date)
     pickle_path = '../../data/intermediate/3_models/model_' + pik_name + '.pickle'
     pickle_out = open(pickle_path, "wb")
-    pickle.dump({input_date: model.lm}, pickle_out)
+    pickle.dump(model.lm, pickle_out)
     pickle_out.close()
     print("Finish dumping\n")
 

@@ -83,6 +83,6 @@ if __name__ == '__main__':
     processed_news_dataframe = pickle.load(pickle_in)
     model_1 = FourGramModel(processed_news_dataframe, np.datetime64('2018-06-08'))
     model_1()
-    pickle_out = open("../../data/intermediate/model.pickle", "wb")
-    pickle.dump(model_1.lm, pickle_out)
+    pickle_out = open("../../data/intermediate/3_model.pickle", "wb")
+    pickle.dump({np.datetime64('2018-06-08 00:00:00'): model_1.lm}, pickle_out)
     pickle_out.close()

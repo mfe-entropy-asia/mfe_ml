@@ -1,7 +1,7 @@
 import pickle
 import string
 from collections import Counter
-
+import numpy as np
 from nltk import ngrams
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
@@ -25,7 +25,7 @@ class FreqToken:
             for tokens in sen_tokens:
                 flat_tokens += list(ngrams(tokens, 4))
             today_frequent_tokens = self.take_frequent_tokens(flat_tokens)
-            self.frequent_grams[date] = today_frequent_tokens
+            self.frequent_grams[np.datetime64(date)] = today_frequent_tokens
 
     def take_frequent_tokens(self, flat_tokens):
         today_frequent_tokens = {}
