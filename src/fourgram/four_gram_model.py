@@ -73,7 +73,7 @@ class FourGramModel:
             for content in self.input_data_frame[self.input_date - idx - 1]:
                 training_text += [self.stop_words_and_stem(word_tokenize(sentence.translate(self.translator)))
                                   for sentence in sent_tokenize(content)]
-        print(training_text[1])
+        # print(training_text[1])
         # self.train, self.vocab = padded_everygram_pipeline(4, training_text)
         every_gram, vocab = padded_everygram_pipeline(4, training_text)  # This will generate unigram, bigram,
         # trigram and fourgram
