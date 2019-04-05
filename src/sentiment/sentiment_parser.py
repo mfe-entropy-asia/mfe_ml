@@ -44,9 +44,9 @@ import Load_MasterDictionary as LM
 # User defined directory for files to be parsed
 TARGET_FILES = r'../../data/test/*.*'
 # User defined file pointer to LM dictionary
-MASTER_DICTIONARY_FILE = r'../../data/3_sentiment/LoughranMcDonald_MasterDictionary_2018.csv'
+MASTER_DICTIONARY_FILE = r'../../data/sentiment/LoughranMcDonald_MasterDictionary_2018.csv'
 # User defined output file
-OUTPUT_FILE = r'../../data/3_sentiment/parser_output.csv'
+OUTPUT_FILE = r'../../data/sentiment/parser_output.csv'
 # Setup output
 OUTPUT_FIELDS = ['file name,', 'file size,', 'number of words,', '% positive,', '% negative,',
                  '% uncertainty,', '% litigious,', '% modal-weak,', '% modal moderate,',
