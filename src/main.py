@@ -1,26 +1,21 @@
-from four_gram_model import FourGramModel
-import pickle
-import numpy as np
+import sys
+import os
+sys.path.append('./createuniverse')
+sys.path.append('./fourgram')
+sys.path.append('./entropy')
+sys.path.append('./sentiment')
+from createuniverse import create_universe
+from fourgram import train_and_store_model
+from entropy import entropy_calc, freq_token
 
-pickle_in = open("./data/intermediate/dict.pickle", "rb")
-processed_news_dict = pickle.load(pickle_in)
 
-fitted_models = {}
-for key in processed_news_dict:
-    if key < np.datetime64('2018-06-08'):
-        continue
-    else:
-        print("Fitting model for date: " + str(key) + "...\n=====================================")
-        fitted_models[key] = FourGramModel(processed_news_dict, key)
-        fitted_models[key]()
-        print("Model for date: " + str(key) + " has been fitted!!!!!! \n"
-                                              "Fitting the next...\n")
-pickle_out = open("./data/intermediate/model.pickle", "wb")
-pickle.dump(fitted_models, pickle_out)
-pickle_out.close()
+os.chdir("./createuniverse")
+# create_universe.run()
 
-# pickle_in = open("./data/intermediate/model.pickle", "rb")
-# lm = pickle.load(pickle_in)
-# print(lm.score('held', ['zealands', 'currency']))
+os.chdir("../fourgram")
+# train_and_store_model.run()
 
+os.chdir("../entropy")
+freq_token.run()
+entropy_calc.run()
 

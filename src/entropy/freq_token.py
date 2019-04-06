@@ -5,7 +5,7 @@ import numpy as np
 from nltk import ngrams
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
-
+import pandas as pd
 
 class FreqToken:
     def __init__(self, cleaned_news, top=5000):
@@ -15,10 +15,10 @@ class FreqToken:
         self.top = top
 
     def __call__(self):
-        for date in cleaned_news.keys():
-            print("processing: %s" % date)
+        for date in self.cleaned_news.keys():
+            print("processing: %s" % pd.to_datetime(str(date)).strftime('%Y-%m-%d'))
             sen_tokens = []
-            for content in cleaned_news[date]:
+            for content in self.cleaned_news[date]:
                 for sentence in sent_tokenize(content):
                     sen_tokens += [word_tokenize(sentence.translate(self.translator))]
             flat_tokens = []
@@ -38,14 +38,17 @@ class FreqToken:
         # self.frequent_tokens = list(list(zip(*top_tokens))[0])
 
 
-if __name__ == '__main__':
+def run():
     pickle_in = open("../../data/intermediate/1_cleaned.pickle", "rb")
     cleaned_news = pickle.load(pickle_in)
     pickle_in.close()
     freToken = FreqToken(cleaned_news)
     freToken()
     # {Timestamp('2018-06-08 00:00:00'): {('0', '0', '0', '0'): 439, ('shares', 'on', 'buy', 'side'): 172,
-    pickle_out = open("../../data/intermediate/2_freq_grams.pickle", "wb")
+    pickle_out = open("../../data/intermediate/3_freq_grams.pickle", "wb")
     pickle.dump(freToken.frequent_grams, pickle_out)
     pickle_out.close()
 
+
+if __name__ == '__main__':
+    run()

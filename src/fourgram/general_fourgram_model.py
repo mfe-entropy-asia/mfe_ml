@@ -82,15 +82,11 @@ if __name__ == '__main__':
     pickle_in.close()
     # Train as all the bodies chained
     start = time.time()
-    print("=====================================\n" +
-          "Fitting model1 for date: " + '2018-06-01' +
-          "...\n=====================================\n")
+    print("Fitting model1 for date: 2018-06-01 \n")
     train_fourgram_model(gen_daily_data_corpus(processed_news_data_frame, np.datetime64('2018-06-01')), model1)
     end = time.time()
-    print("===============================================\n" +
-          "Model1 for date: " + '2018-06-01' + " has been fitted!!!!!! \n" +
-          "Time taking: " + str(end - start) + "\n"
-                                               "===============================================\n")
+    print("Model1 for date: 2018-06-01  has been fitted \n" +
+          "Time taking: " + str(end - start) + "\n")
 
     # # Train as all the bodies chained for month
     # model2 = MLE(4)
@@ -110,15 +106,11 @@ if __name__ == '__main__':
     model3 = MLE(4)
     weekly_training_corpus = gen_7day_corpus(processed_news_data_frame, np.datetime64('2018-06-08'))
     start = time.time()
-    print("=====================================\n" +
-          "Fitting model3 for 7days before: " + '2018-06-08' +
-          "...\n=====================================\n")
+    print("Fitting model3 for 7days before: 2018-06-08 \n")
     train_fourgram_model(weekly_training_corpus, model3)
     end = time.time()
-    print("===============================================\n" +
-          "Model3 for 7 days before: " + '2018-06-08' + " has been fitted!!!!!! \n" +
-          "Time taking: " + str(end - start) + "\n"
-                                               "===============================================\n")
+    print("Model3 for 7 days before: 2018-06-08 has been fitted \n" +
+          "Time taking: " + str(end - start) + "\n")
     print(model1.counts[4])
     # print(model2.counts[4])
     print(model3.counts[4])

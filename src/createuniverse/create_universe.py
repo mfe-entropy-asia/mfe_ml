@@ -34,7 +34,7 @@ def filter_handler(file_list, data_processor, article_dict):
     return result
 
 
-if __name__ == '__main__':
+def run():
     manager = mp.Manager()
     shared_article_dict = manager.dict()
     my_filter = DataFilter()
@@ -77,3 +77,5 @@ if __name__ == '__main__':
     #         print(my_dict[key][0])
 
 
+if __name__ == '__main__':
+    run()

@@ -59,7 +59,7 @@ def create_sentimentdictionaries(_master_dictionary, _sentiment_categories):
     _sentiment_dictionary = {}
     for category in _sentiment_categories:
         _sentiment_dictionary[category] = {}
-    # Create dictionary of 3_sentiment dictionaries with count set = 0
+    # Create dictionary of 2_sentiment dictionaries with count set = 0
     for word in _master_dictionary.keys():
         for category in _sentiment_categories:
             if _master_dictionary[word].sentiment[category]:

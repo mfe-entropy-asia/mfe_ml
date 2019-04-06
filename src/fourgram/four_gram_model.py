@@ -36,15 +36,11 @@ class FourGramModel:
 
     def __call__(self):
         start = time.time()
-        print("=====================================\n" +
-              "Fitting model for date: " + str(self.input_date) +
-              "...\n=====================================\n")
+        print("Fitting model for date: " + str(self.input_date) + "\n")
         self.train_model()
         end = time.time()
-        print("===============================================\n" +
-              "Model for date: " + str(self.input_date) + " has been fitted!!!!!! \n" +
-              "Time taking: " + str(end-start) + "\n"
-              "===============================================\n")
+        print("Model for date: " + str(self.input_date) + " has been fitted \n" +
+              "Time taking: " + str(end-start) + "\n")
 
     def train_model(self):
         """
@@ -83,6 +79,6 @@ if __name__ == '__main__':
     processed_news_dataframe = pickle.load(pickle_in)
     model_1 = FourGramModel(processed_news_dataframe, np.datetime64('2018-06-08'))
     model_1()
-    pickle_out = open("../../data/intermediate/3_model.pickle", "wb")
+    pickle_out = open("../../data/intermediate/2_model.pickle", "wb")
     pickle.dump({np.datetime64('2018-06-08 00:00:00'): model_1.lm}, pickle_out)
     pickle_out.close()

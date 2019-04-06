@@ -10,6 +10,7 @@ import time
 import multiprocessing as mp
 from functools import partial
 
+model_dir = '../../data/intermediate/2_models'
 
 def multiple_processing_func(input_data_series, input_date):
     # global fitted_models
@@ -24,7 +25,7 @@ def multiple_processing_func(input_data_series, input_date):
             print("Training failed;" + e)
     print("Dumping Pickle file.........\n")
     pik_name = str(input_date)
-    pickle_path = '../../data/intermediate/3_models/model_' + pik_name + '.pickle'
+    pickle_path = model_dir + '/model_' + pik_name + '.pickle'
     pickle_out = open(pickle_path, "wb")
     pickle.dump(model.lm, pickle_out)
     pickle_out.close()
@@ -40,24 +41,20 @@ def multi_train_handler(data_series):
     p.join()
 
 
-if __name__ == '__main__':
+def run():
+    if not os.path.exists(model_dir):
+        print("\ncreating dir: ", model_dir, "\n")
+        os.makedirs(model_dir)
     dict_pickle_path = "../../data/intermediate/1_cleaned.pickle"
     pickle_in = open(dict_pickle_path, "rb")
     processed_news_series = pickle.load(pickle_in)
     pickle_in.close()
     start = time.time()
-    # for date in date_list:
-    #     fitted_model = multiple_processing_func(processed_news_series, date)
-    #     pik_name = str(date)
-    #     pickle_path = '../../data/intermediate/model_' + pik_name + '.pickle'
-    #     pickle_out = open(pickle_path, "wb")
-    #     pickle.dump(fitted_model, pickle_out)
-    #     pickle_out.close()
     multi_train_handler(processed_news_series)
     end = time.time()
-    # fitted_models = dict(fitted_models)
     print("All models fitted, total Time:" + str(end - start))
 
-
+if __name__ == '__main__':
+    run()
 
 

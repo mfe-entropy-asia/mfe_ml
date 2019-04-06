@@ -25,7 +25,7 @@ class Entropy:
     @staticmethod
     def read_model(date):
         day = pd.to_datetime(str(date)).strftime('%Y-%m-%d')
-        pickle_in = open("../../data/intermediate/3_models/model_{}.pickle".format(day), "rb")
+        pickle_in = open("../../data/intermediate/2_models/model_{}.pickle".format(day), "rb")
         daily_model = pickle.load(pickle_in)
         pickle_in.close()
         return daily_model
@@ -73,10 +73,13 @@ class Entropy:
         return sentpos, sentneg
 
 
-if __name__ == '__main__':
-    pickle_in = open("../../data/intermediate/2_freq_grams.pickle", "rb")
+def run():
+    pickle_in = open("../../data/intermediate/3_freq_grams.pickle", "rb")
     freq_ngrams = pickle.load(pickle_in)
     pickle_in.close()
     entropy = Entropy(freq_ngrams)
     entropy()
 
+
+if __name__ == '__main__':
+    run()
