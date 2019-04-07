@@ -9,13 +9,16 @@ The project meant to replicate the work done by the referred paper. The code mai
 
 
 ### Data cleaning
+
 Run createuniverse/main.py to generate two files:
 1. 0_filterd: to filter original raw data line by line
 2. 1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc.
+
 ### Model
-TBA
+4-gram model
+
 ### Financial model
-TBA
+Multi-factor model
 
 
 ## Useful links:
@@ -33,3 +36,9 @@ TO-DOs:
 	3. to tokenize (one liner, NLTK should be able to do the job)
 2. to calculate entropy - use lib to count 4-gram
 3. sentiment analysis (use mock data to start parallely)
+
+## 2nd meeting minutes
+Date: 17/3/2019
+
+## Final meeting
+Date: 7/4/2019
