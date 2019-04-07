@@ -31,18 +31,20 @@ class Entropy:
         return daily_model
 
     @staticmethod
-    def calculate_entropy(daily_token_count, daily_ngram_model):
+    def calculate_entropy(eval_token_count, training_model):
         """
         the higher, the more unusual
         """
-        sum_of_counts = sum(daily_token_count.values())
+        sum_of_counts = sum(eval_token_count.values())
         cross_entropy = 0
-        for ngram in daily_token_count:
-            if daily_ngram_model.score(ngram[-1], list(ngram[0:3])) == 0:
-                mi = np.log2(0.25)
+        mis = []
+        for ngram in eval_token_count:
+            if training_model.score(ngram[-1], list(ngram[0:3])) == 0 or sum_of_counts == 0:
+                mi = np.mean(mis) if len(mis) > 0 else np.log2(0.287)
             else:
-                mi = daily_ngram_model.logscore(ngram[-1], list(ngram[0:3]))
-            pi = daily_token_count[ngram] / sum_of_counts
+                mi = training_model.logscore(ngram[-1], list(ngram[0:3]))
+            pi = eval_token_count[ngram] / sum_of_counts
+            mis.append(mi)
             cross_entropy -= pi * mi
         return cross_entropy
 
@@ -68,15 +70,18 @@ class Entropy:
             positive, negative = self.st.pos_neg(ngram)
             sum_pos += daily_token_count[ngram] if positive else 0
             sum_neg += daily_token_count[ngram] if negative else 0
-        sentpos = sum_pos / sum(daily_token_count.values())
-        sentneg = sum_neg / sum(daily_token_count.values())
+        count_sum = sum(daily_token_count.values())
+        sentpos = 0 if count_sum == 0 else sum_pos / count_sum
+        sentneg = 0 if count_sum == 0 else sum_neg / count_sum
         return sentpos, sentneg
 
 
-def run():
-    pickle_in = open("../../data/intermediate/3_freq_grams.pickle", "rb")
+def run(target="", profile=""):
+    pickle_in = open("../../data/intermediate" + target + "/3_freq_grams" + profile + ".pickle", "rb")
     freq_ngrams = pickle.load(pickle_in)
     pickle_in.close()
+    # for date in freq_ngrams:
+    #     print(pd.to_datetime(str(date)).strftime('%Y-%m-%d') + " " + str(freq_ngrams[date]))
     entropy = Entropy(freq_ngrams)
     entropy()
 

@@ -6,12 +6,16 @@ import multiprocessing as mp
 from functools import partial
 import pandas as pd
 import pickle
+import os
+import re
 
 """
 this main function generates two files: 
 0_filterd: to filter original raw data line by line
 1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc. 
 """
+
+work_dir = "../../data/intermediate"
 
 
 def clean_a_file_and_return_data(input_file, data_processor, article_dict):
@@ -49,7 +53,7 @@ def run():
 
     print("\nWriting filtered data ...")
     start = time.time()
-    with open("../../data/intermediate/0_filtered.dat", "w", encoding="utf-8") as f_out:
+    with open(work_dir + "/0_filtered.dat", "w", encoding="utf-8") as f_out:
         for each_time in filtered_series:
             for body in each_time:
                 f_out.write(body)
@@ -64,17 +68,43 @@ def run():
     end = time.time()
     print("Finished in: %s seconds" % (end - start))
 
-    with open("../../data/intermediate/1_cleaned.dat", "w", encoding="utf-8") as f_out:
+    with open(work_dir + "/1_cleaned.dat", "w", encoding="utf-8") as f_out:
         for each_time in cleaner.m_data_series:
             for body in each_time:
                 f_out.write(body + "\n")
-    pickle_out = open("../../data/intermediate/1_cleaned.pickle", "wb")
+    pickle_out = open(work_dir + "/1_cleaned.pickle", "wb")
     pickle.dump(cleaner.m_data_series, pickle_out)
     pickle_out.close()
-    # print(Dat_clean.m_dict)
-    # for key in my_dict:
-    #     if key == np.datetime64('2018-06-08'):
-    #         print(my_dict[key][0])
+
+
+def create_target(names, profile):
+    target_dir = work_dir + "/targets"
+    if not os.path.exists(target_dir):
+        print("\ncreating dir: ", target_dir, "\n")
+        os.makedirs(target_dir)
+    pickle_in = open(work_dir + "/1_cleaned.pickle", "rb")
+    cleaned_news_universe = pickle.load(pickle_in)
+    pickle_in.close()
+    target_news = {}
+    stats = {}
+    candidates = []
+    for name in names:
+        candidates.append(re.compile(name.lower().strip()))
+    for date in cleaned_news_universe.keys():
+        target_news[date] = []
+        stats[date] = 0
+        for article in cleaned_news_universe[date]:
+            for candidate in candidates:
+                if candidate.search(article):
+                    target_news[date].append(article)
+                    stats[date] += 1
+                    break
+    # for date in stats:
+    #     print(pd.to_datetime(str(date)).strftime('%Y-%m-%d') + " " + str(stats[date]))
+    pickle_out = open(target_dir + "/1_cleaned_" + profile.lower().strip() + ".pickle", "wb")
+    pickle.dump(target_news, pickle_out)
+    pickle_out.close()
+    print("Finished dumping target/1_cleaned_" + profile + ".pickle\n")
 
 
 if __name__ == '__main__':

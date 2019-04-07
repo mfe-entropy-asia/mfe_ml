@@ -15,8 +15,9 @@ class FreqToken:
         self.top = top
 
     def __call__(self):
+        print("processing freq_token fpr evaluation set")
         for date in self.cleaned_news.keys():
-            print("processing: %s" % pd.to_datetime(str(date)).strftime('%Y-%m-%d'))
+            # if date == np.datetime64('2018-07-08'):
             sen_tokens = []
             for content in self.cleaned_news[date]:
                 for sentence in sent_tokenize(content):
@@ -32,22 +33,23 @@ class FreqToken:
         counter = Counter(flat_tokens)
         top_tokens = counter.most_common(self.top)
         for pair in top_tokens:
-            if pair[1] > 1:
+            if pair[1] >= 1:
                 today_frequent_tokens[pair[0]] = pair[1]
         return today_frequent_tokens
         # self.frequent_tokens = list(list(zip(*top_tokens))[0])
 
 
-def run():
-    pickle_in = open("../../data/intermediate/1_cleaned.pickle", "rb")
+def run(target="", profile=""):
+    pickle_in = open("../../data/intermediate" + target + "/1_cleaned" + profile + ".pickle", "rb")
     cleaned_news = pickle.load(pickle_in)
     pickle_in.close()
     freToken = FreqToken(cleaned_news)
     freToken()
     # {Timestamp('2018-06-08 00:00:00'): {('0', '0', '0', '0'): 439, ('shares', 'on', 'buy', 'side'): 172,
-    pickle_out = open("../../data/intermediate/3_freq_grams.pickle", "wb")
+    pickle_out = open("../../data/intermediate" + target + "/3_freq_grams" + profile + ".pickle", "wb")
     pickle.dump(freToken.frequent_grams, pickle_out)
     pickle_out.close()
+    print("Finished dumping " + target + "/3_freq_grams" + profile + ".pickle\n")
 
 
 if __name__ == '__main__':
