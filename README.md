@@ -9,7 +9,10 @@ The project meant to replicate the work done by the referred paper. The code mai
 
 
 ### Data cleaning
-Exclude non-English news, tables and useless information
+
+Run createuniverse/main.py to generate two files:
+1. 0_filterd: to filter original raw data line by line
+2. 1_cleaned: to clean up data. e.g. extract news body, remove unnecessary words etc.
 
 ### Model
 4-gram model
